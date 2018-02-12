@@ -114,14 +114,9 @@
                 let data = snapshot.val(); // det borttagna objektet
                 let key = snapshot.key;
                 let container = document.getElementsByClassName("movieContainer");
-                //                console.log(key);
-                //                console.log(container.length);
+
                 for (let i = 0; i < container.length; i++) {
                     if (container[i].id === key) {
-                        // console.log("match!");
-                        // console.log(container[i].id);
-                        // console.log(container[i]);
-                        // console.log(key);
                         container[i].remove();
                     }
                 }
@@ -139,24 +134,25 @@
                 releaseYear: addMovie.releaseYear.value,
                 plotSummary: addMovie.plotSummary.value
             }
+            let object = ""
 
             // Vi ska antingen klicka på DELETE eller CHANGE knappen
             movieList.movieList.addEventListener("click", function(e) {
             let parentNode = e.target.parentNode;
-            let object = ""
 
-              console.log(e.target.innerText)
+                db.ref("movies/"+parentNode.id).once("value",function(snapshot){
 
+                     object = snapshot.val()
+                })
+
+                  // Här kommer den bara gå in när diven innehåller INPUT element
                 if(parentNode.children[0].tagName === "INPUT"){
 
 
-
-
-
-
+                    // Går igenom alla INPUTelement för att ändra deras värden till det man skrivit in.
+                    //
                     for(let x =0; x < parentNode.children.length; x++){
 
-                      console.log(parentNode.children[x].value)
                       if(x === 0){
                         changedMovie.title = parentNode.children[x].value
                       }else if(x ===1){
@@ -171,17 +167,22 @@
                       }
                     }
 
+                  // OM man klickar på change knappen
                   if(e.target.innerText === "Change"){
+                    //Hämtar objektet från databasen från detta idet.
                     db.ref("movies/"+ parentNode.id).set(changedMovie);
 
+                    //rensar databasen för att kunna lägga in nytt.
                     parentNode.innerHTML = ""
-                    let obj = ""
-                    db.ref("movies/" + parentNode.id).once("value",function(snapshot){
 
-                        obj = snapshot.val()
+                    // db.ref("movies/" + parentNode.id).once("value",function(snapshot){
+                    //      // Uppdaterar obj objektet med det senaste från databasen från detta meddelandet
+                    //
+                    //     obj = snapshot.val()
+                    //
+                    // })
 
-                    })
-
+                    // Skapar alla element igen
                     let createOneMovie = {
                         title: document.createElement("h2"),
                         director: document.createElement("h2"),
@@ -191,15 +192,18 @@
                         deleteBtn: document.createElement("button"),
                     }
 
-
-
-                    createOneMovie.title.innerText = obj.title;
-                    createOneMovie.director.innerText = obj.director;
-                    createOneMovie.releaseYear.innerText = obj.releaseYear;
-                    createOneMovie.plotSummary.innerText = obj.plotSummary;
+                      console.log(object)
+                    // Ger alla element innehåll
+                    createOneMovie.title.innerText = changedMovie.title;
+                    createOneMovie.director.innerText = changedMovie.director;
+                    createOneMovie.releaseYear.innerText = changedMovie.releaseYear;
+                    createOneMovie.plotSummary.innerText = changedMovie.plotSummary;
                     createOneMovie.changeBtn.innerText = "Change";
                     createOneMovie.deleteBtn.innerText = "Delete";
 
+
+
+                    // Lägger in alla element i domen
                     parentNode.appendChild(createOneMovie.title)
                     parentNode.appendChild(createOneMovie.director)
 
@@ -208,16 +212,14 @@
                     parentNode.appendChild(createOneMovie.plotSummary)
                     parentNode.appendChild(createOneMovie.changeBtn);
                     parentNode.appendChild(createOneMovie.deleteBtn);
-                    console.log(parentNode)
 
                   }
 
 
-                }else if(e.target.innerText === "Delete") {
+                }else if(e.target.innerText === "Delete") { // Tar bort Hela elementet
 
-                     // kollar förälderns ID som man är på.
 
-                    // remove tar bort ett objekt. Man måste använda objektets key
+                    // remove tar bort ett objectekt. Man måste använda objectektets key
                     db.ref("movies/" + parentNode.id).remove();
                     // Tar bort objektet lokalt på hemsidan
                     e.target.parentNode.remove();
@@ -225,9 +227,11 @@
 
 
 
-
+                    //Rensar hela innehållet i diven innan vi lägger in nya saker
                     parentNode.innerHTML = ""
 
+
+                    // Skapar massa inputfält
                     let inputArea = {
                         title: document.createElement("INPUT"),
                         director: document.createElement("INPUT"),
@@ -238,11 +242,10 @@
 
                     }
 
-                    db.ref("movies/"+parentNode.id).once("value",function(snapshot){
+                    // Hämtar ner databasen från detta meddelandet.
 
-                         object = snapshot.val()
-                        console.log(snapshot.val())
-                    })
+
+                    //Sätter attributer på TYPE och Value
                     inputArea.title.setAttribute("type", "text");
                     inputArea.title.setAttribute("value",object.title)
                     inputArea.director.setAttribute("type", "text");
@@ -255,6 +258,7 @@
                     inputArea.deleteBtn.innerText = "Delete";
 
 
+                    // LÄgger in alla input element i diven som man kan ändra på.
                     parentNode.appendChild(inputArea.title);
                     parentNode.appendChild(inputArea.director);
                     parentNode.appendChild(inputArea.releaseYear);
@@ -280,7 +284,6 @@
                 let data = snapshot.val();
                 let key = snapshot.key;
 
-                console.log(data);
 
 
             });
