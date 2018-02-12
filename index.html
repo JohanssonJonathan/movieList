@@ -17,6 +17,7 @@
             messagingSenderId: "204741024581"
         };
         firebase.initializeApp(config);
+
     </script>
 
     <script>
@@ -57,7 +58,7 @@
             let movie = {
 
                 title: "",
-                director : "",
+                director: "",
                 releaseYear: "",
                 plotSummary: ""
 
@@ -68,7 +69,6 @@
             ////////////////////////////////////
 
             // Tar hem alla objekt första gången när man kommit in på hemsidan.
-
             db.ref("movies/").on("child_added", function(snapshot) {
                 let movieAdded = snapshot.val();
                 let movieKey = snapshot.key;
@@ -109,19 +109,19 @@
             })
 
             // Detta händer om något tagits bort i databasen
-            db.ref("movies/" ).on('child_removed', function(snapshot) {
-            	// Inträffar när ett objekt tas bort.
-            	let data = snapshot.val();  // det borttagna objektet
-            	let key  = snapshot.key;
+            db.ref("movies/").on('child_removed', function(snapshot) {
+                // Inträffar när ett objekt tas bort.
+                let data = snapshot.val(); // det borttagna objektet
+                let key = snapshot.key;
                 let container = document.getElementsByClassName("movieContainer");
-//                console.log(key);
-//                console.log(container.length);
-                for(let i = 0; i < container.length; i++){
-                    if(container[i].id === key){
-                        console.log("match!");
-                        console.log(container[i].id);
-                        console.log(container[i]);
-                        console.log(key);
+                //                console.log(key);
+                //                console.log(container.length);
+                for (let i = 0; i < container.length; i++) {
+                    if (container[i].id === key) {
+                        // console.log("match!");
+                        // console.log(container[i].id);
+                        // console.log(container[i]);
+                        // console.log(key);
                         container[i].remove();
                     }
                 }
@@ -133,58 +133,157 @@
             //////// EVENTLISTENERS ///////////////////////////////
             //////////////////////////////////////////////////////
 
+            let changedMovie = {
+               title: addMovie.title.value,
+                director: addMovie.director.value,
+                releaseYear: addMovie.releaseYear.value,
+                plotSummary: addMovie.plotSummary.value
+            }
+
             // Vi ska antingen klicka på DELETE eller CHANGE knappen
-            movieList.movieList.addEventListener("click",function(e){
+            movieList.movieList.addEventListener("click", function(e) {
+            let parentNode = e.target.parentNode;
+            let object = ""
 
-              let parentNodeId = e.target.parentNode.id;
+              console.log(e.target.innerText)
 
-              // Om man klickar på Delete knappen
-              if(e.target.innerText === "Delete"){
-
-                parentNodeId// kollar förälderns ID som man är på.
-
-              // remove tar bort ett objekt. Man måste använda objektets key
-                 db.ref("movies/" + parentNodeId ).remove();
-              // Tar bort objektet lokalt på hemsidan
-                 e.target.parentNode.remove();
-              }else if(e.target.innerText === "Change"){ //Om man klickar på change knappen
-
-                  let divId = document.getElementById(e.target.parentNode.id);
+                if(parentNode.children[0].tagName === "INPUT"){
 
 
-                    divId.innerHTML  = ""
 
-                  let inputArea ={
-                        title: document.createElement("INPUT"),
-                        director :document.createElement("INPUT"),
-                        releaseYear :document.createElement("INPUT"),
-                        plotSummary :document.createElement("INPUT"),
-                        changeBtn : document.createElement("BUTTON"),
-                        deleteBtn : document.createElement("BUTTON")
+
+
+
+                    for(let x =0; x < parentNode.children.length; x++){
+
+                      console.log(parentNode.children[x].value)
+                      if(x === 0){
+                        changedMovie.title = parentNode.children[x].value
+                      }else if(x ===1){
+
+                        changedMovie.director = parentNode.children[x].value
+                      }else if( x === 2){
+
+                        changedMovie.releaseYear = parentNode.children[x].value
+                      }else if(x === 3){
+
+                          changedMovie.plotSummary =  parentNode.children[x].value
+                      }
+                    }
+
+                  if(e.target.innerText === "Change"){
+                    db.ref("movies/"+ parentNode.id).set(changedMovie);
+
+                    parentNode.innerHTML = ""
+                    let obj = ""
+                    db.ref("movies/" + parentNode.id).once("value",function(snapshot){
+
+                        obj = snapshot.val()
+
+                    })
+
+                    let createOneMovie = {
+                        title: document.createElement("h2"),
+                        director: document.createElement("h2"),
+                        releaseYear: document.createElement("h2"),
+                        plotSummary: document.createElement("p"),
+                        changeBtn: document.createElement("button"),
+                        deleteBtn: document.createElement("button"),
+                    }
+
+
+
+                    createOneMovie.title.innerText = obj.title;
+                    createOneMovie.director.innerText = obj.director;
+                    createOneMovie.releaseYear.innerText = obj.releaseYear;
+                    createOneMovie.plotSummary.innerText = obj.plotSummary;
+                    createOneMovie.changeBtn.innerText = "Change";
+                    createOneMovie.deleteBtn.innerText = "Delete";
+
+                    parentNode.appendChild(createOneMovie.title)
+                    parentNode.appendChild(createOneMovie.director)
+
+                    parentNode.appendChild(createOneMovie.releaseYear)
+
+                    parentNode.appendChild(createOneMovie.plotSummary)
+                    parentNode.appendChild(createOneMovie.changeBtn);
+                    parentNode.appendChild(createOneMovie.deleteBtn);
+                    console.log(parentNode)
 
                   }
-                      inputArea.title.setAttribute("type", "text");
-                      inputArea.director.setAttribute("type", "text");
-                      inputArea.releaseYear.setAttribute("type", "text");
-                      inputArea.plotSummary.setAttribute("type", "text");
-                      inputArea.changeBtn.innerText = "Change";
-                      inputArea.deleteBtn.innerText = "Delete"
 
 
-                 divId.appendChild(inputArea.title)
-                 divId.appendChild(inputArea.director)
-                 divId.appendChild(inputArea.releaseYear)
-                 divId.appendChild(inputArea.plotSummary)
-                 divId.appendChild(inputArea.changeBtn)
-                 divId.appendChild(inputArea.deleteBtn)
+                }else if(e.target.innerText === "Delete") {
 
-                // divId.appendChild(inputArea.releaseYear)
-                // divId.appendChild(inputArea.plotSummary)
+                     // kollar förälderns ID som man är på.
 
-              }
+                    // remove tar bort ett objekt. Man måste använda objektets key
+                    db.ref("movies/" + parentNode.id).remove();
+                    // Tar bort objektet lokalt på hemsidan
+                    e.target.parentNode.remove();
+                }else if (e.target.innerText === "Change") { //Om man klickar på change knappen
+
+
+
+
+                    parentNode.innerHTML = ""
+
+                    let inputArea = {
+                        title: document.createElement("INPUT"),
+                        director: document.createElement("INPUT"),
+                        releaseYear: document.createElement("INPUT"),
+                        plotSummary: document.createElement("INPUT"),
+                        changeBtn: document.createElement("BUTTON"),
+                        deleteBtn: document.createElement("BUTTON")
+
+                    }
+
+                    db.ref("movies/"+parentNode.id).once("value",function(snapshot){
+
+                         object = snapshot.val()
+                        console.log(snapshot.val())
+                    })
+                    inputArea.title.setAttribute("type", "text");
+                    inputArea.title.setAttribute("value",object.title)
+                    inputArea.director.setAttribute("type", "text");
+                    inputArea.director.setAttribute("value",object.director)
+                    inputArea.releaseYear.setAttribute("type", "text");
+                    inputArea.releaseYear.setAttribute("value", object.releaseYear)
+                    inputArea.plotSummary.setAttribute("type", "text");
+                    inputArea.plotSummary.setAttribute("value",object.plotSummary)
+                    inputArea.changeBtn.innerText = "Change";
+                    inputArea.deleteBtn.innerText = "Delete";
+
+
+                    parentNode.appendChild(inputArea.title);
+                    parentNode.appendChild(inputArea.director);
+                    parentNode.appendChild(inputArea.releaseYear);
+                    parentNode.appendChild(inputArea.plotSummary);
+                    parentNode.appendChild(inputArea.changeBtn);
+                    parentNode.appendChild(inputArea.deleteBtn);
+
+                    // parentNode.appendChild(inputArea.releaseYear)
+                    // divId.appendChild(inputArea.plotSummary)
+
+                }
+
+
+
+
 
             })
 
+
+
+            db.ref('movies/').on('child_changed', function(snapshot) {
+                // Inträffar när ett objekt ändras.
+                let data = snapshot.val();
+                let key = snapshot.key;
+
+                console.log(data);
+
+
+            });
 
 
 
@@ -205,6 +304,7 @@
 
 
         })
+
     </script>
     <style media="screen">
         body {
@@ -287,19 +387,19 @@
         }
 
         .movieContainer {
-            border: 2px solid rgba(255,255,255,0.7);
+            border: 2px solid rgba(255, 255, 255, 0.7);
             display: inline-block;
             padding: 10px;
             text-align: center;
             width: 25%;
             align-self: stretch;
             margin: 25px;
-            background:rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
 
         }
 
-        .movieContainer input{
-          margin:10px;
+        .movieContainer input {
+            margin: 10px;
         }
 
     </style>
