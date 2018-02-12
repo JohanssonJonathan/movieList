@@ -88,6 +88,10 @@
 
             db.ref("movies/").once("value", function(snapshot) {
 
+
+                // Skapa en film som finns på databasen
+
+
                 // Ska lägga in allt i movieList container
 
                 let allMovies = snapshot.val();
@@ -95,11 +99,36 @@
                 //loopar igenom hela databasen
                 for (let object in allMovies) {
 
+                  let createOneMovie = {
+
+                        div : document.createElement("div"),
+                        title : document.createElement("h2"),
+                        director : document.createElement("h2"),
+                        plotSummary: document.createElement("p")
+
+                  }
+
+
                     console.log("key: " + object)
                     console.log(allMovies[object])
 
+                    // Hämtar all information från databasen
+                    createOneMovie.title.innerText = allMovies[object].title;
+                    createOneMovie.director.innerText = allMovies[object].director;
+                    createOneMovie.plotSummary.innerText = allMovies[object].plotSummary;
+
+                    //Sätter diven till classnamnet som finns i vår css
+                    createOneMovie.div.className = "movieContainer";
 
 
+                    //Lägger till allt i diven
+                    createOneMovie.div.appendChild(createOneMovie.title);
+                    createOneMovie.div.appendChild(createOneMovie.director);
+                    createOneMovie.div.appendChild(createOneMovie.plotSummary);
+
+
+                    //lägger till diven i movieList Containern
+                    movieList.movieList.appendChild(createOneMovie.div)
 
                 }
 
@@ -232,39 +261,14 @@
         <div id="movieList">
 
 
-            <div class="movieContainer">
+            <!-- <div class="movieContainer">
 
                 <h2>Titanic</h2>
                 <h2>James cameron</h2>
                 <h2>1997</h2>
                 <p>Sinking ship, people getting #rekt</p>
 
-            </div>
-            <div class="movieContainer">
-
-                <h2>Lord of the Rings</h2>
-                <h2>Peter Jackson</h2>
-                <h2>2001</h2>
-                <p>Hobbits trying to save the day, not going very well.</p>
-
-            </div>
-            <div class="movieContainer">
-
-                <h2>Lord of the Rings: Return of the King</h2>
-                <h2>Peter Jackson</h2>
-                <h2>2003</h2>
-                <p>The King returns, saving the day. Everyone lives happily ever after.</p>
-
-            </div>
-            <div class="movieContainer">
-
-                <h2>Lord of the Rings: Return of the King</h2>
-                <h2>Peter Jackson</h2>
-                <h2>2003</h2>
-                <p>The King returns, saving the day. Everyone lives happily ever after.</p>
-
-            </div>
-
+            </div> -->
 
         </div>
 
