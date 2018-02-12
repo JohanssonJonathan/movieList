@@ -49,6 +49,146 @@
 
             }
 
+
+            //////////////////////////////////////////
+            /// Tar alla element som ligger i varje film container
+            ////////////////////////////////////////////
+
+            let movie = {
+
+                title: "",
+                director : "",
+                releaseYear: "",
+                plotSummary: ""
+
+            }
+
+            /////////////////////////////////////
+            ///          FIREBASE             ///
+            ////////////////////////////////////
+
+            // Tar hem alla objekt första gången när man kommit in på hemsidan.
+
+            db.ref("movies/").on("child_added", function(snapshot) {
+                let movieAdded = snapshot.val();
+                let movieKey = snapshot.key;
+
+                let createOneMovie = {
+                    div: document.createElement("div"),
+                    title: document.createElement("h2"),
+                    director: document.createElement("h2"),
+                    releaseYear: document.createElement("h2"),
+                    plotSummary: document.createElement("p"),
+                    changeBtn: document.createElement("button"),
+                    deleteBtn: document.createElement("button"),
+                }
+
+                createOneMovie.changeBtn.innerText = "Change";
+                createOneMovie.deleteBtn.innerText = "Delete";
+
+                createOneMovie.title.innerText = movieAdded.title;
+                createOneMovie.director.innerText = movieAdded.director;
+                createOneMovie.releaseYear.innerText = movieAdded.releaseYear;
+                createOneMovie.plotSummary.innerText = movieAdded.plotSummary;
+
+                //Sätter diven till classnamnet som finns i vår css
+                createOneMovie.div.className = "movieContainer";
+
+                //Lägger till allt i diven
+                createOneMovie.div.appendChild(createOneMovie.title);
+                createOneMovie.div.appendChild(createOneMovie.director);
+                createOneMovie.div.appendChild(createOneMovie.releaseYear);
+                createOneMovie.div.appendChild(createOneMovie.plotSummary);
+                createOneMovie.div.appendChild(createOneMovie.changeBtn);
+                createOneMovie.div.appendChild(createOneMovie.deleteBtn);
+
+                createOneMovie.div.setAttribute("id", movieKey)
+
+                //lägger till diven i movieList Containern
+                movieList.movieList.appendChild(createOneMovie.div)
+            })
+
+            // Detta händer om något tagits bort i databasen
+            db.ref("movies/" ).on('child_removed', function(snapshot) {
+            	// Inträffar när ett objekt tas bort.
+            	let data = snapshot.val();  // det borttagna objektet
+            	let key  = snapshot.key;
+                let container = document.getElementsByClassName("movieContainer");
+//                console.log(key);
+//                console.log(container.length);
+                for(let i = 0; i < container.length; i++){
+                    if(container[i].id === key){
+                        console.log("match!");
+                        console.log(container[i].id);
+                        console.log(container[i]);
+                        console.log(key);
+                        container[i].remove();
+                    }
+                }
+            });
+
+
+
+            ////////////////////////////////////////////////////////
+            //////// EVENTLISTENERS ///////////////////////////////
+            //////////////////////////////////////////////////////
+
+            // Vi ska antingen klicka på DELETE eller CHANGE knappen
+            movieList.movieList.addEventListener("click",function(e){
+
+              let parentNodeId = e.target.parentNode.id;
+
+              // Om man klickar på Delete knappen
+              if(e.target.innerText === "Delete"){
+
+                parentNodeId// kollar förälderns ID som man är på.
+
+              // remove tar bort ett objekt. Man måste använda objektets key
+                 db.ref("movies/" + parentNodeId ).remove();
+              // Tar bort objektet lokalt på hemsidan
+                 e.target.parentNode.remove();
+              }else if(e.target.innerText === "Change"){ //Om man klickar på change knappen
+
+                  let divId = document.getElementById(e.target.parentNode.id);
+
+
+                    divId.innerHTML  = ""
+
+                  let inputArea ={
+                        title: document.createElement("INPUT"),
+                        director :document.createElement("INPUT"),
+                        releaseYear :document.createElement("INPUT"),
+                        plotSummary :document.createElement("INPUT"),
+                        changeBtn : document.createElement("BUTTON"),
+                        deleteBtn : document.createElement("BUTTON")
+
+                  }
+                      inputArea.title.setAttribute("type", "text");
+                      inputArea.director.setAttribute("type", "text");
+                      inputArea.releaseYear.setAttribute("type", "text");
+                      inputArea.plotSummary.setAttribute("type", "text");
+                      inputArea.changeBtn.innerText = "Change";
+                      inputArea.deleteBtn.innerText = "Delete"
+
+
+                 divId.appendChild(inputArea.title)
+                 divId.appendChild(inputArea.director)
+                 divId.appendChild(inputArea.releaseYear)
+                 divId.appendChild(inputArea.plotSummary)
+                 divId.appendChild(inputArea.changeBtn)
+                 divId.appendChild(inputArea.deleteBtn)
+
+                // divId.appendChild(inputArea.releaseYear)
+                // divId.appendChild(inputArea.plotSummary)
+
+              }
+
+            })
+
+
+
+
+
             // Klickar på addMovie.addButton och alla värden läggs in i ett objekt.
             addMovie.addButton.addEventListener("click", function() {
 
@@ -59,84 +199,9 @@
                     plotSummary: addMovie.plotSummary.value
                 }
 
+                // Skickar upp den skapade filmen till firebase
                 db.ref("movies/").push(addMovieValues);
-
             })
-
-
-
-            // db.ref("movies/")on("child_added", function(snapshot){
-            //
-            //
-            //
-            //
-            // })
-
-
-
-
-
-
-
-
-
-            ////////////////////////////////
-            //FIREBASE
-            ///////////////////////////////
-
-            // Tar hem alla objekt första gången när man kommit in på hemsidan.
-
-            db.ref("movies/").once("value", function(snapshot) {
-
-
-                // Skapa en film som finns på databasen
-
-
-                // Ska lägga in allt i movieList container
-
-                let allMovies = snapshot.val();
-
-                //loopar igenom hela databasen
-                for (let object in allMovies) {
-
-                  let createOneMovie = {
-
-                        div : document.createElement("div"),
-                        title : document.createElement("h2"),
-                        director : document.createElement("h2"),
-                        plotSummary: document.createElement("p")
-
-                  }
-
-
-                    console.log("key: " + object)
-                    console.log(allMovies[object])
-
-                    // Hämtar all information från databasen
-                    createOneMovie.title.innerText = allMovies[object].title;
-                    createOneMovie.director.innerText = allMovies[object].director;
-                    createOneMovie.plotSummary.innerText = allMovies[object].plotSummary;
-
-                    //Sätter diven till classnamnet som finns i vår css
-                    createOneMovie.div.className = "movieContainer";
-
-
-                    //Lägger till allt i diven
-                    createOneMovie.div.appendChild(createOneMovie.title);
-                    createOneMovie.div.appendChild(createOneMovie.director);
-                    createOneMovie.div.appendChild(createOneMovie.plotSummary);
-
-
-                    //lägger till diven i movieList Containern
-                    movieList.movieList.appendChild(createOneMovie.div)
-
-                }
-
-
-            })
-
-
-
 
 
         })
@@ -232,6 +297,11 @@
             background:rgba(0,0,0,0.5);
 
         }
+
+        .movieContainer input{
+          margin:10px;
+        }
+
     </style>
 </head>
 
