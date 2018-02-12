@@ -36,6 +36,7 @@
         title : document.getElementById("title"),
         director : document.getElementById("director"),
         releaseYear : document.getElementById("releaseYear"),
+        plotSummary : document.getElementById("plotSummary"),
         addButton : document.getElementById("add"),
 
       }
@@ -55,7 +56,8 @@
         let addMovieValues = {
           title : addMovie.title.value,
           director :addMovie.director.value,
-          releaseYear :  addMovie.releaseYear.value
+          releaseYear :  addMovie.releaseYear.value,
+          plotSummary: addMovie.plotSummary.value
         }
 
         console.log(addMovie.title.value);
@@ -67,11 +69,12 @@
 
 
 
-    db.ref("movies/")on("child_added", function(snapshot){
-
-        
-
-    })
+    // db.ref("movies/")on("child_added", function(snapshot){
+    //
+    //
+    //
+    //
+    // })
 
 
 
@@ -162,7 +165,7 @@
     .addMovie{
         border:solid 2px rgba(255,255,255,0.6);
         width:30%;
-        height: 300px;
+        height: 400px;
         margin:5px;
         text-align: center;
         background: rgba(0,0,0,0.3);
@@ -191,6 +194,8 @@
 
     }
 
+
+
     </style>
   </head>
   <body>
@@ -211,11 +216,24 @@
               <input type="text" name="" value="" placeholder="Title" id="title">
               <input type="text" name="" value="" placeholder="Director" id="director">
               <input type="text" name="" value="" placeholder="Release Year" id="releaseYear">
+              <textarea  id="plotSummary" name="" rows="6" cols="40"></textarea>
               <button id="add">Add</button>
 
           </div>
 
-          <div id="movieList"></div>
+          <div id="movieList">
+
+
+                <div>
+
+                  <h2>Titanic</h2>
+                  <h2>James cameron</h2>
+                  <h2>1997</h2>
+                  <p>Sinking ship, people getting #rekt</p>
+
+                </div>
+
+          </div>
 
       </div>
 
