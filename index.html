@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Movielist</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="style.css"> -->
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script>
       // Initialize Firebase
@@ -17,6 +17,181 @@
       };
       firebase.initializeApp(config);
     </script>
+
+    <script>
+
+
+    window.addEventListener("load", function(){
+
+      let db = firebase.database();
+
+
+
+
+      ////////////////////////////////////////////////////
+      // Tar alla element som hör till addMovie Containern
+      //////////////////////////////////////////////////
+      let addMovie = {
+        addMovie : document.getElementsByClassName("addMovie")[0],
+        title : document.getElementById("title"),
+        director : document.getElementById("director"),
+        releaseYear : document.getElementById("releaseYear"),
+        addButton : document.getElementById("add"),
+
+      }
+
+      /////////////////////////////////////////////
+      // Tar alla element som hör till movieList Containern
+      ///////////////////////////////////////////////
+      let movieList = {
+
+        movieList : document.getElementById("movieList"),
+
+      }
+
+    // Klickar på addMovie.addButton och alla värden läggs in i ett objekt.
+    addMovie.addButton.addEventListener("click",function(){
+
+        let addMovieValues = {
+          title : addMovie.title.value,
+          director :addMovie.director.value,
+          releaseYear :  addMovie.releaseYear.value
+        }
+
+        console.log(addMovie.title.value);
+        console.log(addMovie.director.value);
+        console.log(addMovie.releaseYear.value);
+
+        db.ref("movies/").push(addMovieValues);
+    })
+
+
+
+    db.ref("movies/")on("child_added", function(snapshot){
+
+        
+
+    })
+
+
+
+
+
+
+
+
+
+    ////////////////////////////////
+    //FIREBASE
+    ///////////////////////////////
+
+    // Tar hem alla objekt första gången när man kommit in på hemsidan.
+
+      db.ref("movies/").once("value", function(snapshot) {
+
+        // Ska lägga in allt i movieList container
+
+        let allMovies = snapshot.val();
+
+        //loopar igenom hela databasen
+        for(let object in allMovies) {
+          console.log(object);
+        }
+
+
+      })
+
+
+
+
+
+})
+    </script>
+    <style media="screen">
+
+
+
+    body{
+      background: url("blurred_lines.jpeg");
+      background-size:cover;
+      color:rgba(255,255,255,0.8);
+      font-family: arial;
+    }
+
+    h1{
+      text-align: center;
+
+      position: relative;
+      margin-top: 100px;
+    }
+
+    .search{
+      margin: auto;
+    text-align: center;
+    }
+
+    input#writeMovie {
+
+        padding:5px 15px;
+        width:30%;
+        font-size: 1.2em;
+        border-radius: 30px 0;
+        box-shadow: 0 3px 5px rgba(0,0,0,0.3)
+
+    }
+
+
+    button#searchMovie {
+
+      padding:10px 20px;
+      border-radius: 30px 0;
+      background:rgb(90, 163, 223);
+      color:rgba(255,255,255,0.8);
+      border:0;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.3)
+
+    }
+
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      margin-top: 20px;
+    }
+
+    .addMovie{
+        border:solid 2px rgba(255,255,255,0.6);
+        width:30%;
+        height: 300px;
+        margin:5px;
+        text-align: center;
+        background: rgba(0,0,0,0.3);
+
+    }
+
+    .addMovie input{
+      display: block;
+      margin:20px auto;
+      width:80%;
+      padding: 10px 5px;
+
+    }
+    .addMovie button {
+      display: block;
+      margin:auto;
+      padding:5px 35px;
+    }
+
+    #movieList {
+      border:solid 2px rgba(255,255,255,0.6);
+      background: rgba(0,0,0,0.3);
+      width: 70%;
+      height: 550px;
+      margin: 5px;
+
+    }
+
+    </style>
   </head>
   <body>
 
@@ -28,6 +203,24 @@
         <input type="text" name="" value="" placeholder="Search movie" id="writeMovie">
         <button id="searchMovie">Search</button>
       </div>
+
+      <div class="container">
+
+          <div class="addMovie">
+              <h3>Add your movie to your list</h3>
+              <input type="text" name="" value="" placeholder="Title" id="title">
+              <input type="text" name="" value="" placeholder="Director" id="director">
+              <input type="text" name="" value="" placeholder="Release Year" id="releaseYear">
+              <button id="add">Add</button>
+
+          </div>
+
+          <div id="movieList"></div>
+
+      </div>
+
+
+
 
   </body>
 </html>
