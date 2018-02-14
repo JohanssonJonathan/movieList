@@ -117,10 +117,22 @@
 
             totalInDatabase()
             test()
+
+            let showMoore = document.getElementById("showMore")
+
+
+            showMoore.addEventListener("click",function(){
+              console.log("hej")
+              limitMultiply++
+
+                  test()
+
+            })
+
           function test(){
             db.ref('movies/').limitToLast(limit * limitMultiply).once('value',function(snapshot){
                 let movies = snapshot.val();
-
+                console.log(limit * limitMultiply)
                 console.log("totalLimit: ", totalLimit)
                 movieList.movieList.innerHTML=""
                 console.log("MOVIES: ",movies)
@@ -168,31 +180,15 @@
                 movieListLength = movieList.movieList.children.length-1
 
 
-                let showMoore = ""
                 if(howManyInDatabase > 6){
-                    console.log("howManyInDatabase_ ", howManyInDatabase)
-                     showMoore = document.getElementById("showMore")
                      showMore.style.display = "block"
 
-                     console.log(showMoore)
-                    showMoore.addEventListener("click",function(){
 
-                      limitMultiply++
-
-                          test()
-
-                          console.log("hej")
-                    })
                 }
 
                 if(movieListLength >= totalLimit){
                   showMore.style.display = "block"
-                  showMoore = document.getElementById("showMore")
-                 showMoore.addEventListener("click",function(){
-                       limitMultiply++
-                       test()
-                       console.log("hej")
-                 })
+
 
                 }
 
@@ -209,21 +205,13 @@
             let key = ""
           db.ref("movies/").on("child_added",function(snapshot){
 
-            console.log("howManyInDatabase_ childadded ", howManyInDatabase)
 
                   let ob = snapshot.val()
                    key = snapshot.key
 
                   nyasteKey = ob
 
-                  // console.log(j)
-                  for(let x in ob){
 
-                      // nyasteKey = ob[key];
-
-                      // console.log(ob[key])
-
-                  }
 
 
           })
