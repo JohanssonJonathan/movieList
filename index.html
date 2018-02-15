@@ -25,9 +25,6 @@
 
             let db = firebase.database();
 
-
-
-
             ////////////////////////////////////////////////////
             // Tar alla element som hör till addMovie Containern
             //////////////////////////////////////////////////
@@ -38,7 +35,6 @@
                 releaseYear: document.getElementById("releaseYear"),
                 plotSummary: document.getElementById("plotSummary"),
                 addButton: document.getElementById("add"),
-
             }
 
             /////////////////////////////////////////////
@@ -47,7 +43,7 @@
             let movieList = {
 
                 movieList: document.getElementById("movieList"),
-                movies : document.getElementsByClassName("movieContainer"),
+                movies: document.getElementsByClassName("movieContainer"),
             }
 
 
@@ -81,194 +77,551 @@
             // Tar hem alla objekt första gången när man kommit in på hemsidan.
 
             let limit = 6
-            let limitMultiply =1;
+            let limitMultiply = 1;
             let totalLimit = limit * limitMultiply;
-            let howManyObjects = 0;
             let showMore = document.createElement("h2");
 
-              showMore.innerText = "Show more";
-              showMore.style.position = "absolute";
-              showMore.style.bottom = "0";
-              showMore.style.left = "0";
-              showMore.style.right = "0"
-              showMore.setAttribute("id","showMore")
-              showMore.style.display = "none"
+            showMore.innerText = "Show more";
+            showMore.style.position = "absolute";
+            showMore.style.bottom = "0";
+            showMore.style.left = "0";
+            showMore.style.right = "0"
+            showMore.setAttribute("id", "showMore")
+            showMore.style.display = "none"
 
-              body.appendChild(showMore)
+            body.appendChild(showMore)
 
-
-            let movieListLength = 1;
+            let movieListLength = 0;
 
             let howManyInDatabase = 0;
 
-            function totalInDatabase(){
 
-                db.ref("movies/").on("value", function(snapshot){
-
-                        let obj = snapshot.val()
-
-                        for(let x in obj){
-                            howManyInDatabase = howManyInDatabase + 1
-                        }
-
-                })
-
-            }
-
-            totalInDatabase()
-            test()
 
             let showMoore = document.getElementById("showMore")
 
 
-            showMoore.addEventListener("click",function(){
-              console.log("hej")
-              limitMultiply++
+            showMoore.addEventListener("click", function() {
+                limitMultiply++
+                test()
 
-                  test()
+
 
             })
 
+
+
+            let helaDatabasen = []
+
+
+
+            let title = []
+            let releaseYear = [];
+            let director = []
+
+          test()
+
+          let currentPage = 1;
+          let howManyPages = 0;
+          let theCode = ""
           function test(){
-            db.ref('movies/').limitToLast(limit * limitMultiply).once('value',function(snapshot){
-                let movies = snapshot.val();
-                console.log(limit * limitMultiply)
-                console.log("totalLimit: ", totalLimit)
-                movieList.movieList.innerHTML=""
-                console.log("MOVIES: ",movies)
 
-                for(let key in movies){
+              db.ref("movies/").once("value",function(snapshot){
 
 
-                    let createOneMovie = {
-                        div: document.createElement("div"),
-                        title: document.createElement("h2"),
-                        director: document.createElement("h2"),
-                        releaseYear: document.createElement("h2"),
-                        plotSummary: document.createElement("p"),
-                        changeBtn: document.createElement("button"),
-                        deleteBtn: document.createElement("button"),
-                    }
+                    let database = snapshot.val();
 
-                    createOneMovie.changeBtn.innerText = "Change";
-                    createOneMovie.deleteBtn.innerText = "Delete";
+                    for(let movies in database){
 
-                    createOneMovie.title.innerText = movies[key].title;
-                    createOneMovie.director.innerText = movies[key].director;
-                    createOneMovie.releaseYear.innerText = movies[key].releaseYear;
-                    createOneMovie.plotSummary.innerText = movies[key].plotSummary;
+                        database[movies].id = movies;
 
-                    //Sätter diven till classnamnet som finns i vår css
-                    createOneMovie.div.className = "movieContainer";
-
-                    //Lägger till allt i diven
-                    createOneMovie.div.appendChild(createOneMovie.title);
-                    createOneMovie.div.appendChild(createOneMovie.director);
-                    createOneMovie.div.appendChild(createOneMovie.releaseYear);
-                    createOneMovie.div.appendChild(createOneMovie.plotSummary);
-                    createOneMovie.div.appendChild(createOneMovie.changeBtn);
-                    createOneMovie.div.appendChild(createOneMovie.deleteBtn);
-
-                    createOneMovie.div.setAttribute("id", key)
-
-                    //lägger till diven i movieList Containern
-                    movieList.movieList.appendChild(createOneMovie.div)
-
-                    howManyObjects++
-
-                }
-                movieListLength = movieList.movieList.children.length-1
-
-
-                if(howManyInDatabase > 6){
-                     showMore.style.display = "block"
-
-
-                }
-
-                if(movieListLength >= totalLimit){
-                  showMore.style.display = "block"
-
-
-                }
+                        helaDatabasen.push(database[movies])
+                    };
 
 
 
-            })
+                     theCode = function(){
 
-          }
+                       howManyPages = Math.ceil(helaDatabasen.length/6);
 
+                        movieList.movieList.innerHTML =""
 
+                              let div = document.createElement("div");
 
-          function childadded(){
-            let nyasteKey = ""
-            let key = ""
-          db.ref("movies/").on("child_added",function(snapshot){
-
-
-                  let ob = snapshot.val()
-                   key = snapshot.key
-
-                  nyasteKey = ob
+                              div.className = "pageNumbersDiv";
 
 
+                              for(let i=0; i <howManyPages; i++){
 
 
-          })
+                                  let newPageNumber = document.createElement("span");
+
+                                  if(i+1 === currentPage){
+                                    newPageNumber.style.color = "black"
+                                  }
+                                  newPageNumber.innerText = i+1;
+                                  newPageNumber.className = "pageNumbers"
+                                  newPageNumber.setAttribute("id",i)
+                                  div.appendChild(newPageNumber)
 
 
-                if(howManyObjects < 6){
-                  let createOneMovie = {
-                      div: document.createElement("div"),
-                      title: document.createElement("h2"),
-                      director: document.createElement("h2"),
-                      releaseYear: document.createElement("h2"),
-                      plotSummary: document.createElement("p"),
-                      changeBtn: document.createElement("button"),
-                      deleteBtn: document.createElement("button"),
-                  }
-
-                  createOneMovie.changeBtn.innerText = "Change";
-                  createOneMovie.deleteBtn.innerText = "Delete";
-
-                  createOneMovie.title.innerText = nyasteKey.title;
-                  createOneMovie.director.innerText = nyasteKey.director;
-                  createOneMovie.releaseYear.innerText = nyasteKey.releaseYear;
-                  createOneMovie.plotSummary.innerText = nyasteKey.plotSummary;
-
-                  //Sätter diven till classnamnet som finns i vår css
-                  createOneMovie.div.className = "movieContainer";
-
-                  //Lägger till allt i diven
-                  createOneMovie.div.appendChild(createOneMovie.title);
-                  createOneMovie.div.appendChild(createOneMovie.director);
-                  createOneMovie.div.appendChild(createOneMovie.releaseYear);
-                  createOneMovie.div.appendChild(createOneMovie.plotSummary);
-                  createOneMovie.div.appendChild(createOneMovie.changeBtn);
-                  createOneMovie.div.appendChild(createOneMovie.deleteBtn);
-
-                  createOneMovie.div.setAttribute("id", key)
-
-                  //lägger till diven i movieList Containern
-                  movieList.movieList.appendChild(createOneMovie.div)
-
-
-                console.log("totalLimit: ", totalLimit)
-                console.log("movieListLength: ", movieListLength +1)
-                  if(movieListLength +2 === totalLimit){
-                    showMore.style.display = "block"
-
-
-                  }
-
-
-                  howManyObjects++
-                  movieListLength++
+                              }
+                              movieList.movieList.appendChild(div)
 
 
 
-              }
-        }
+                              let startValue = 0;
+
+                                  function putOnScreen(currentPage ){
+
+                                        if(currentPage === 1){
+                                          currentPage = 0;
+                                        }
+
+                                        if(currentPage>0){
+                                          startValue = (currentPage * 6)-6
+                                        }
+
+
+
+                                  }
+
+
+                                putOnScreen(currentPage)
+
+                                let currentPageTotal = currentPage * 6
+
+
+
+                                for(let i = startValue; i< currentPageTotal; i++){
+
+
+                                      if(helaDatabasen[i] !== undefined){
+
+                                              let createOneMovie = {
+                                                  div: document.createElement("div"),
+                                                  title: document.createElement("h2"),
+                                                  director: document.createElement("h2"),
+                                                  releaseYear: document.createElement("h2"),
+                                                  plotSummary: document.createElement("p"),
+                                                  changeBtn: document.createElement("button"),
+                                                  deleteBtn: document.createElement("button"),
+                                              }
+
+                                              createOneMovie.changeBtn.innerText = "Change";
+                                              createOneMovie.deleteBtn.innerText = "Delete";
+
+                                              createOneMovie.title.innerText = helaDatabasen[i].title;
+                                              createOneMovie.director.innerText = helaDatabasen[i].director;
+                                              createOneMovie.releaseYear.innerText = helaDatabasen[i].releaseYear;
+                                              createOneMovie.plotSummary.innerText = helaDatabasen[i].plotSummary;
+
+                                              //Sätter diven till classnamnet som finns i vår css
+                                              createOneMovie.div.className = "movieContainer";
+
+                                              //Lägger till allt i diven
+                                              createOneMovie.div.appendChild(createOneMovie.title);
+                                              createOneMovie.div.appendChild(createOneMovie.director);
+                                              createOneMovie.div.appendChild(createOneMovie.releaseYear);
+                                              createOneMovie.div.appendChild(createOneMovie.plotSummary);
+                                              createOneMovie.div.appendChild(createOneMovie.changeBtn);
+                                              createOneMovie.div.appendChild(createOneMovie.deleteBtn);
+
+                                              createOneMovie.div.setAttribute("id", helaDatabasen[i].id)
+
+                                              //lägger till diven i movieList Containern
+                                              movieList.movieList.appendChild(createOneMovie.div)
+
+                                }
+                              }
+                              console.log(helaDatabasen.length)
+
+
+                                if(howManyPages>1){
+
+                                    for(let i=0; i<howManyPages; i++){
+
+                                      let pageNr = "pageNr"+ i;
+
+                                        pageNr = document.getElementById(i)
+                                      pageNr.addEventListener("click", function(e){
+
+                                          let nummer = Number(pageNr.id)
+
+
+
+                                          currentPage = nummer+1
+                                          theCode()
+
+
+
+                                      })
+                                    }
+
+                                }
+
+                              }
+
+                              theCode()
+
+
+
+              });
+
+
+          };
+
+
+                      // Detta händer om något tagits bort i databasen
+                      db.ref("movies/").on('child_removed', function(snapshot) {
+                          // Inträffar när ett objekt tas bort.
+
+                          let data = snapshot.val(); // det borttagna objektet
+                          let key = snapshot.key;
+                          let container = document.getElementsByClassName("movieContainer");
+
+
+                        for(let i =0; i <helaDatabasen.length; i++){
+
+                          if(helaDatabasen[i].id === key){
+
+                              helaDatabasen.splice(i,1)
+
+                          }
+                        }
+
+
+                        theCode()
+
+
+                          //
+                          // for (let i = 0; i < container.length; i++) {
+                          //     if (container[i].id === key) {
+                          //         container[i].remove();
+                          //     }
+                          // }
+
+                      });
+
+                      // Klickar på addMovie.addButton och alla värden läggs in i ett objekt.
+                      addMovie.addButton.addEventListener("click", function() {
+
+                          let addMovieValues = {
+                              title: addMovie.title.value,
+                              director: addMovie.director.value,
+                              releaseYear: addMovie.releaseYear.value,
+                              plotSummary: addMovie.plotSummary.value
+                          }
+
+
+
+                          // Skickar upp den skapade filmen till firebase
+                          db.ref("movies/").push(addMovieValues);
+
+                        let key = "";
+                        let obj = "";
+                          db.ref("movies/").on("child_added",function(snapshot){
+
+                                 obj = snapshot.val();
+                                  key = snapshot.key;
+                          });
+
+
+                          let nyaObjektet = {
+                            title: addMovie.title.value,
+                            director: addMovie.director.value,
+                            releaseYear: addMovie.releaseYear.value,
+                            plotSummary: addMovie.plotSummary.value,
+                            id:key,
+                          }
+
+                          helaDatabasen.push(nyaObjektet)
+
+
+                          if(helaDatabasen.length< 7){
+
+                            let createOneMovie = {
+                                        div: document.createElement("div"),
+                                        title: document.createElement("h2"),
+                                        director: document.createElement("h2"),
+                                        releaseYear: document.createElement("h2"),
+                                        plotSummary: document.createElement("p"),
+                                        changeBtn: document.createElement("button"),
+                                        deleteBtn: document.createElement("button"),
+                                    }
+
+                                    createOneMovie.changeBtn.innerText = "Change";
+                                    createOneMovie.deleteBtn.innerText = "Delete";
+
+                                    createOneMovie.title.innerText = nyaObjektet.title;
+                                    createOneMovie.director.innerText = nyaObjektet.director;
+                                    createOneMovie.releaseYear.innerText = nyaObjektet.releaseYear;
+                                    createOneMovie.plotSummary.innerText = nyaObjektet.plotSummary;
+
+                                    //Sätter diven till classnamnet som finns i vår css
+                                    createOneMovie.div.className = "movieContainer";
+
+                                    //Lägger till allt i diven
+                                    createOneMovie.div.appendChild(createOneMovie.title);
+                                    createOneMovie.div.appendChild(createOneMovie.director);
+                                    createOneMovie.div.appendChild(createOneMovie.releaseYear);
+                                    createOneMovie.div.appendChild(createOneMovie.plotSummary);
+                                    createOneMovie.div.appendChild(createOneMovie.changeBtn);
+                                    createOneMovie.div.appendChild(createOneMovie.deleteBtn);
+
+                                    createOneMovie.div.setAttribute("id", nyaObjektet.id)
+
+                                    //lägger till diven i movieList Containern
+                                    movieList.movieList.appendChild(createOneMovie.div)
+
+                          }else{
+                            theCode()
+                          }
+
+
+
+
+
+
+                      })
+
+
+                                  // let nyasteKey = ""
+                                  // let key = ""
+                                  // db.ref("movies/").on("child_added", function(snapshot) {
+                                  //
+                                  //
+                                  //
+                                  //     let ob = snapshot.val()
+                                  //     key = snapshot.key
+                                  //
+                                  //     howManyInDatabase = howManyInDatabase + 1
+                                  //
+                                  //     nyasteKey = ob
+                                  //
+                                  //     childadded();
+                                  //
+                                  //
+                                  //
+                                  // })
+                                  //
+                                  // function childadded() {
+                                  //
+                                  //   if (movieListLength+1 === 6) {
+                                  //       showMore.style.display = "block"
+                                  //
+                                  //
+                                  //   }
+                                  //
+                                  //     if (movieListLength < (limit * limitMultiply)) {
+                                  //         let createOneMovie = {
+                                  //             div: document.createElement("div"),
+                                  //             title: document.createElement("h2"),
+                                  //             director: document.createElement("h2"),
+                                  //             releaseYear: document.createElement("h2"),
+                                  //             plotSummary: document.createElement("p"),
+                                  //             changeBtn: document.createElement("button"),
+                                  //             deleteBtn: document.createElement("button"),
+                                  //         }
+                                  //
+                                  //         createOneMovie.changeBtn.innerText = "Change";
+                                  //         createOneMovie.deleteBtn.innerText = "Delete";
+                                  //
+                                  //         createOneMovie.title.innerText = nyasteKey.title;
+                                  //         createOneMovie.director.innerText = nyasteKey.director;
+                                  //         createOneMovie.releaseYear.innerText = nyasteKey.releaseYear;
+                                  //         createOneMovie.plotSummary.innerText = nyasteKey.plotSummary;
+                                  //
+                                  //         //Sätter diven till classnamnet som finns i vår css
+                                  //         createOneMovie.div.className = "movieContainer";
+                                  //
+                                  //         //Lägger till allt i diven
+                                  //         createOneMovie.div.appendChild(createOneMovie.title);
+                                  //         createOneMovie.div.appendChild(createOneMovie.director);
+                                  //         createOneMovie.div.appendChild(createOneMovie.releaseYear);
+                                  //         createOneMovie.div.appendChild(createOneMovie.plotSummary);
+                                  //         createOneMovie.div.appendChild(createOneMovie.changeBtn);
+                                  //         createOneMovie.div.appendChild(createOneMovie.deleteBtn);
+                                  //
+                                  //         createOneMovie.div.setAttribute("id", key)
+                                  //
+                                  //         //lägger till diven i movieList Containern
+                                  //         movieList.movieList.appendChild(createOneMovie.div)
+                                  //
+                                  //
+                                  //
+                                  //         if (movieList.movieList.children.length === 6) {
+                                  //             limitMultiply = 1
+                                  //         }
+                                  //
+                                  //
+                                  //         movieListLength++
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //
+                                  //     }
+                                  // }
+
+
+
+
+
+
+          // function test(){
+          //   db.ref("movies/").once("value",function(snapshot){
+          //
+          //         movieList.movieList.innerHTML = ""
+          //
+          //         let filmObjekt = snapshot.val()
+          //         let obj = snapshot.val()
+          //
+          //         let antal = 0;
+          //
+          //         let total =0;
+          //
+          //
+          //
+          //
+          //
+          //
+          //
+          //
+          //
+          //         for(let film in filmObjekt){
+          //
+          //           if((limit * limitMultiply) === antal){
+          //
+          //               break;
+          //
+          //           }
+          //
+          //           let createOneMovie = {
+          //               div: document.createElement("div"),
+          //               title: document.createElement("h2"),
+          //               director: document.createElement("h2"),
+          //               releaseYear: document.createElement("h2"),
+          //               plotSummary: document.createElement("p"),
+          //               changeBtn: document.createElement("button"),
+          //               deleteBtn: document.createElement("button"),
+          //           }
+          //
+          //           createOneMovie.changeBtn.innerText = "Change";
+          //           createOneMovie.deleteBtn.innerText = "Delete";
+          //
+          //           createOneMovie.title.innerText = filmObjekt[film].title;
+          //           createOneMovie.director.innerText = filmObjekt[film].director;
+          //           createOneMovie.releaseYear.innerText = filmObjekt[film].releaseYear;
+          //           createOneMovie.plotSummary.innerText = filmObjekt[film].plotSummary;
+          //
+          //           //Sätter diven till classnamnet som finns i vår css
+          //           createOneMovie.div.className = "movieContainer";
+          //
+          //           //Lägger till allt i diven
+          //           createOneMovie.div.appendChild(createOneMovie.title);
+          //           createOneMovie.div.appendChild(createOneMovie.director);
+          //           createOneMovie.div.appendChild(createOneMovie.releaseYear);
+          //           createOneMovie.div.appendChild(createOneMovie.plotSummary);
+          //           createOneMovie.div.appendChild(createOneMovie.changeBtn);
+          //           createOneMovie.div.appendChild(createOneMovie.deleteBtn);
+          //
+          //           createOneMovie.div.setAttribute("id", film)
+          //
+          //           //lägger till diven i movieList Containern
+          //           movieList.movieList.appendChild(createOneMovie.div)
+          //
+          //           antal++
+          //
+          //         }
+          //         movieListLength = movieList.movieList.children.length
+          //
+          //         if (howManyInDatabase > 6) {
+          //             showMore.style.display = "block"
+          //
+          //
+          //         }
+          //
+          //         if (movieListLength >= totalLimit) {
+          //             showMore.style.display = "block"
+          //
+          //
+          //         }
+          //
+          //         console.log(helaDatabasen)
+          //
+          //       function sorter(sort) {
+          //         for(let antalFilmer in obj){
+          //               total++;
+          //               antalFilmerIDatabasen = total
+          //
+          //               obj[antalFilmer].id = antalFilmer
+          //
+          //               helaDatabasen.push(obj[antalFilmer])
+          //               sort.push(obj[antalFilmer].director)
+          //         }
+          //
+          //
+          //         for(let x =0; x< sort.length; x++){
+          //
+          //
+          //
+          //                   for(let y in helaDatabasen){
+          //
+          //
+          //                    if(sort.sort()[x] === helaDatabasen[y].director){
+          //
+          //                      console.log(helaDatabasen[y])
+          //
+          //                         movieList.movieList.innerHTML = ""
+          //
+          //                         let createOneMovie = {
+          //                             div: document.createElement("div"),
+          //                             title: document.createElement("h2"),
+          //                             director: document.createElement("h2"),
+          //                             releaseYear: document.createElement("h2"),
+          //                             plotSummary: document.createElement("p"),
+          //                             changeBtn: document.createElement("button"),
+          //                             deleteBtn: document.createElement("button"),
+          //                         }
+          //
+          //                         createOneMovie.changeBtn.innerText = "Change";
+          //                         createOneMovie.deleteBtn.innerText = "Delete";
+          //
+          //                         createOneMovie.title.innerText = helaDatabasen[y].title;
+          //                         createOneMovie.director.innerText = helaDatabasen[y].director;
+          //                         createOneMovie.releaseYear.innerText = helaDatabasen[y].releaseYear;
+          //                         createOneMovie.plotSummary.innerText = helaDatabasen[y].plotSummary;
+          //
+          //                         //Sätter diven till classnamnet som finns i vår css
+          //                         createOneMovie.div.className = "movieContainer";
+          //
+          //                         //Lägger till allt i diven
+          //                         createOneMovie.div.appendChild(createOneMovie.title);
+          //                         createOneMovie.div.appendChild(createOneMovie.director);
+          //                         createOneMovie.div.appendChild(createOneMovie.releaseYear);
+          //                         createOneMovie.div.appendChild(createOneMovie.plotSummary);
+          //                         createOneMovie.div.appendChild(createOneMovie.changeBtn);
+          //                         createOneMovie.div.appendChild(createOneMovie.deleteBtn);
+          //
+          //                         createOneMovie.div.setAttribute("id", helaDatabasen[y].id)
+          //
+          //                         //lägger till diven i movieList Containern
+          //                         movieList.movieList.appendChild(createOneMovie.div)
+          //
+          //
+          //                     }
+          //                   }
+          //
+          //
+          //             }
+          //       }
+          //
+          //       sorter(director)
+          //
+          //
+          //   })
+          //
+          // }
 
 
 
@@ -276,25 +629,10 @@
 
 
 
-            // Detta händer om något tagits bort i databasen
-            db.ref("movies/").on('child_removed', function(snapshot) {
-                // Inträffar när ett objekt tas bort.
-                let data = snapshot.val(); // det borttagna objektet
-                let key = snapshot.key;
-                let container = document.getElementsByClassName("movieContainer");
-              console.log("howManyObjects: ", howManyObjects)
-              --howManyObjects
-              if(howManyObjects < 6){
-                  showMore.style.display = "none"
-              }
 
-              movieListLength--
-                for (let i = 0; i < container.length; i++) {
-                    if (container[i].id === key) {
-                        container[i].remove();
-                    }
-                }
-            });
+
+
+
 
 
 
@@ -305,205 +643,339 @@
 
 
             let changedMovie = {
-               title: addMovie.title.value,
+                title: addMovie.title.value,
                 director: addMovie.director.value,
                 releaseYear: addMovie.releaseYear.value,
                 plotSummary: addMovie.plotSummary.value
             }
             let object = ""
 
-            // Vi ska antingen klicka på DELETE eller CHANGE knappen
-            movieList.movieList.addEventListener("click", function(e) {
-            let parentNode = e.target.parentNode;
 
-                db.ref("movies/"+parentNode.id).once("value",function(snapshot){
+            movieList.movieList.addEventListener("click",function(e){
 
-                     object = snapshot.val()
-                })
 
-                  // Här kommer den bara gå in när diven innehåller INPUT element
-                if(parentNode.children[0].tagName === "INPUT"){
+
+              let parentNode = e.target.parentNode;
+              console.log(parentNode.id)
+
+              object = {
+                  title:parentNode.children[0].innerText,
+                  director:parentNode.children[1].innerText,
+                  releaseYear: parentNode.children[2].innerText,
+                  plotSummary:parentNode.children[3].innerText
+
+              }
+
+
+
+
+              // Här kommer den bara gå in när diven innehåller INPUT element
+                if (parentNode.children[0].tagName === "INPUT") {
 
 
                     // Går igenom alla INPUTelement för att ändra deras värden till det man skrivit in.
                     //
-                    for(let x =0; x < parentNode.children.length; x++){
 
-                      if(x === 0){
-                        changedMovie.title = parentNode.children[x].value
-                      }else if(x ===1){
+                    for (let x = 0; x < parentNode.children.length; x++) {
 
-                        changedMovie.director = parentNode.children[x].value
-                      }else if( x === 2){
+                        if (x === 0) {
+                            changedMovie.title = parentNode.children[x].value
+                        } else if (x === 1) {
 
-                        changedMovie.releaseYear = parentNode.children[x].value
-                      }else if(x === 3){
+                            changedMovie.director = parentNode.children[x].value
+                        } else if (x === 2) {
 
-                          changedMovie.plotSummary =  parentNode.children[x].value
-                      }
+                            changedMovie.releaseYear = parentNode.children[x].value
+                        } else if (x === 3) {
+
+                            changedMovie.plotSummary = parentNode.children[x].value
+                        }
                     }
 
-                  // OM man klickar på change knappen
-                  if(e.target.innerText === "Change"){
-                    //Hämtar objektet från databasen från detta idet.
-                    db.ref("movies/"+ parentNode.id).set(changedMovie);
+                    // OM man klickar på change knappen
+                    if (e.target.innerText === "Change") {
+                        //Hämtar objektet från databasen från detta idet.
+                        db.ref("movies/" + parentNode.id).set(changedMovie);
 
-                    //rensar databasen för att kunna lägga in nytt.
-                    parentNode.innerHTML = ""
-
-
-                    // Skapar alla element igen
-                    let createOneMovie = {
-                        title: document.createElement("h2"),
-                        director: document.createElement("h2"),
-                        releaseYear: document.createElement("h2"),
-                        plotSummary: document.createElement("p"),
-                        changeBtn: document.createElement("button"),
-                        deleteBtn: document.createElement("button"),
-                    }
-
-                    // Ger alla element innehåll
-                    createOneMovie.title.innerText = changedMovie.title;
-                    createOneMovie.director.innerText = changedMovie.director;
-                    createOneMovie.releaseYear.innerText = changedMovie.releaseYear;
-                    createOneMovie.plotSummary.innerText = changedMovie.plotSummary;
-                    createOneMovie.changeBtn.innerText = "Change";
-                    createOneMovie.deleteBtn.innerText = "Delete";
+                        //rensar databasen för att kunna lägga in nytt.
+                        parentNode.innerHTML = ""
 
 
+                        // Skapar alla element igen
+                        let createOneMovie = {
+                            title: document.createElement("h2"),
+                            director: document.createElement("h2"),
+                            releaseYear: document.createElement("h2"),
+                            plotSummary: document.createElement("p"),
+                            changeBtn: document.createElement("button"),
+                            deleteBtn: document.createElement("button"),
+                        }
 
-                    // Lägger in alla element i domen
-                    parentNode.appendChild(createOneMovie.title)
-                    parentNode.appendChild(createOneMovie.director)
-
-                    parentNode.appendChild(createOneMovie.releaseYear)
-
-                    parentNode.appendChild(createOneMovie.plotSummary)
-                    parentNode.appendChild(createOneMovie.changeBtn);
-                    parentNode.appendChild(createOneMovie.deleteBtn);
-
-                  }
-
-
-                }else if(e.target.innerText === "Delete") { // Tar bort Hela elementet
-
-
-                    // remove tar bort ett objectekt. Man måste använda objectektets key
-                    db.ref("movies/" + parentNode.id).remove();
-                    // Tar bort objektet lokalt på hemsidan
-                    e.target.parentNode.remove();
-
-                }else if (e.target.innerText === "Change") { //Om man klickar på change knappen
+                        // Ger alla element innehåll
+                        createOneMovie.title.innerText = changedMovie.title;
+                        createOneMovie.director.innerText = changedMovie.director;
+                        createOneMovie.releaseYear.innerText = changedMovie.releaseYear;
+                        createOneMovie.plotSummary.innerText = changedMovie.plotSummary;
+                        createOneMovie.changeBtn.innerText = "Change";
+                        createOneMovie.deleteBtn.innerText = "Delete";
 
 
 
-                    //Rensar hela innehållet i diven innan vi lägger in nya saker
-                    parentNode.innerHTML = ""
+                        // Lägger in alla element i domen
+                        parentNode.appendChild(createOneMovie.title)
+                        parentNode.appendChild(createOneMovie.director)
 
+                        parentNode.appendChild(createOneMovie.releaseYear)
 
-                    // Skapar massa inputfält
-                    let inputArea = {
-                        title: document.createElement("INPUT"),
-                        director: document.createElement("INPUT"),
-                        releaseYear: document.createElement("INPUT"),
-                        plotSummary: document.createElement("INPUT"),
-                        changeBtn: document.createElement("BUTTON"),
-                        deleteBtn: document.createElement("BUTTON")
+                        parentNode.appendChild(createOneMovie.plotSummary)
+                        parentNode.appendChild(createOneMovie.changeBtn);
+                        parentNode.appendChild(createOneMovie.deleteBtn);
 
                     }
 
-                    // Hämtar ner databasen från detta meddelandet.
+
+                }else if (e.target.innerText === "Delete") { // Tar bort Hela elementet
 
 
-                    //Sätter attributer på TYPE och Value
-                    inputArea.title.setAttribute("type", "text");
-                    inputArea.title.setAttribute("value",object.title)
-                    inputArea.director.setAttribute("type", "text");
-                    inputArea.director.setAttribute("value",object.director)
-                    inputArea.releaseYear.setAttribute("type", "text");
-                    inputArea.releaseYear.setAttribute("value", object.releaseYear)
-                    inputArea.plotSummary.setAttribute("type", "text");
-                    inputArea.plotSummary.setAttribute("value",object.plotSummary)
-                    inputArea.changeBtn.innerText = "Change";
-                    inputArea.deleteBtn.innerText = "Delete";
+                        // remove tar bort ett objectekt. Man måste använda objectektets key
+                        db.ref("movies/" + parentNode.id).remove();
+                        // Tar bort objektet lokalt på hemsidan
+                        e.target.parentNode.remove();
+
+                    } else if (e.target.innerText === "Change") { //Om man klickar på change knappen
 
 
-                    // LÄgger in alla input element i diven som man kan ändra på.
-                    parentNode.appendChild(inputArea.title);
-                    parentNode.appendChild(inputArea.director);
-                    parentNode.appendChild(inputArea.releaseYear);
-                    parentNode.appendChild(inputArea.plotSummary);
-                    parentNode.appendChild(inputArea.changeBtn);
-                    parentNode.appendChild(inputArea.deleteBtn);
 
-                    // parentNode.appendChild(inputArea.releaseYear)
-                    // divId.appendChild(inputArea.plotSummary)
+                        //Rensar hela innehållet i diven innan vi lägger in nya saker
+                        parentNode.innerHTML = ""
 
-                }
+
+                        // Skapar massa inputfält
+                        let inputArea = {
+                            title: document.createElement("INPUT"),
+                            director: document.createElement("INPUT"),
+                            releaseYear: document.createElement("INPUT"),
+                            plotSummary: document.createElement("INPUT"),
+                            changeBtn: document.createElement("BUTTON"),
+                            deleteBtn: document.createElement("BUTTON")
+
+                        }
+
+                        // Hämtar ner databasen från detta meddelandet.
+
+
+                        //Sätter attributer på TYPE och Value
+                        inputArea.title.setAttribute("type", "text");
+                        inputArea.title.setAttribute("value", object.title)
+                        inputArea.director.setAttribute("type", "text");
+                        inputArea.director.setAttribute("value", object.director)
+                        inputArea.releaseYear.setAttribute("type", "text");
+                        inputArea.releaseYear.setAttribute("value",object.releaseYear)
+                        inputArea.plotSummary.setAttribute("type", "text");
+                        inputArea.plotSummary.setAttribute("value", object.plotSummary)
+                        inputArea.changeBtn.innerText = "Change";
+                        inputArea.deleteBtn.innerText = "Delete";
+
+
+                        // LÄgger in alla input element i diven som man kan ändra på.
+                        parentNode.appendChild(inputArea.title);
+                        parentNode.appendChild(inputArea.director);
+                        parentNode.appendChild(inputArea.releaseYear);
+                        parentNode.appendChild(inputArea.plotSummary);
+                        parentNode.appendChild(inputArea.changeBtn);
+                        parentNode.appendChild(inputArea.deleteBtn);
+
+                        // parentNode.appendChild(inputArea.releaseYear)
+                        // divId.appendChild(inputArea.plotSummary)
+
+                    }
+
+
 
             })
 
+            // Vi ska antingen klicka på DELETE eller CHANGE knappen
+            // movieList.movieList.addEventListener("click", function(e) {
+            //     let parentNode = e.target.parentNode;
+            //
+            //     db.ref("movies/" + parentNode.id).once("value", function(snapshot) {
+            //
+            //         object = snapshot.val()
+            //     })
+            //
+            //     // Här kommer den bara gå in när diven innehåller INPUT element
+            //     if (parentNode.children[0].tagName === "INPUT") {
+            //
+            //
+            //         // Går igenom alla INPUTelement för att ändra deras värden till det man skrivit in.
+            //         //
+            //         for (let x = 0; x < parentNode.children.length; x++) {
+            //
+            //             if (x === 0) {
+            //                 changedMovie.title = parentNode.children[x].value
+            //             } else if (x === 1) {
+            //
+            //                 changedMovie.director = parentNode.children[x].value
+            //             } else if (x === 2) {
+            //
+            //                 changedMovie.releaseYear = parentNode.children[x].value
+            //             } else if (x === 3) {
+            //
+            //                 changedMovie.plotSummary = parentNode.children[x].value
+            //             }
+            //         }
+            //
+            //         // OM man klickar på change knappen
+            //         if (e.target.innerText === "Change") {
+            //             //Hämtar objektet från databasen från detta idet.
+            //             db.ref("movies/" + parentNode.id).set(changedMovie);
+            //
+            //             //rensar databasen för att kunna lägga in nytt.
+            //             parentNode.innerHTML = ""
+            //
+            //
+            //             // Skapar alla element igen
+            //             let createOneMovie = {
+            //                 title: document.createElement("h2"),
+            //                 director: document.createElement("h2"),
+            //                 releaseYear: document.createElement("h2"),
+            //                 plotSummary: document.createElement("p"),
+            //                 changeBtn: document.createElement("button"),
+            //                 deleteBtn: document.createElement("button"),
+            //             }
+            //
+            //             // Ger alla element innehåll
+            //             createOneMovie.title.innerText = changedMovie.title;
+            //             createOneMovie.director.innerText = changedMovie.director;
+            //             createOneMovie.releaseYear.innerText = changedMovie.releaseYear;
+            //             createOneMovie.plotSummary.innerText = changedMovie.plotSummary;
+            //             createOneMovie.changeBtn.innerText = "Change";
+            //             createOneMovie.deleteBtn.innerText = "Delete";
+            //
+            //
+            //
+            //             // Lägger in alla element i domen
+            //             parentNode.appendChild(createOneMovie.title)
+            //             parentNode.appendChild(createOneMovie.director)
+            //
+            //             parentNode.appendChild(createOneMovie.releaseYear)
+            //
+            //             parentNode.appendChild(createOneMovie.plotSummary)
+            //             parentNode.appendChild(createOneMovie.changeBtn);
+            //             parentNode.appendChild(createOneMovie.deleteBtn);
+            //
+            //         }
+            //
+            //
+            //     } else if (e.target.innerText === "Delete") { // Tar bort Hela elementet
+            //
+            //
+            //         // remove tar bort ett objectekt. Man måste använda objectektets key
+            //         db.ref("movies/" + parentNode.id).remove();
+            //         // Tar bort objektet lokalt på hemsidan
+            //         e.target.parentNode.remove();
+            //
+            //     } else if (e.target.innerText === "Change") { //Om man klickar på change knappen
+            //
+            //
+            //
+            //         //Rensar hela innehållet i diven innan vi lägger in nya saker
+            //         parentNode.innerHTML = ""
+            //
+            //
+            //         // Skapar massa inputfält
+            //         let inputArea = {
+            //             title: document.createElement("INPUT"),
+            //             director: document.createElement("INPUT"),
+            //             releaseYear: document.createElement("INPUT"),
+            //             plotSummary: document.createElement("INPUT"),
+            //             changeBtn: document.createElement("BUTTON"),
+            //             deleteBtn: document.createElement("BUTTON")
+            //
+            //         }
+            //
+            //         // Hämtar ner databasen från detta meddelandet.
+            //
+            //
+            //         //Sätter attributer på TYPE och Value
+            //         inputArea.title.setAttribute("type", "text");
+            //         inputArea.title.setAttribute("value", object.title)
+            //         inputArea.director.setAttribute("type", "text");
+            //         inputArea.director.setAttribute("value", object.director)
+            //         inputArea.releaseYear.setAttribute("type", "text");
+            //         inputArea.releaseYear.setAttribute("value", object.releaseYear)
+            //         inputArea.plotSummary.setAttribute("type", "text");
+            //         inputArea.plotSummary.setAttribute("value", object.plotSummary)
+            //         inputArea.changeBtn.innerText = "Change";
+            //         inputArea.deleteBtn.innerText = "Delete";
+            //
+            //
+            //         // LÄgger in alla input element i diven som man kan ändra på.
+            //         parentNode.appendChild(inputArea.title);
+            //         parentNode.appendChild(inputArea.director);
+            //         parentNode.appendChild(inputArea.releaseYear);
+            //         parentNode.appendChild(inputArea.plotSummary);
+            //         parentNode.appendChild(inputArea.changeBtn);
+            //         parentNode.appendChild(inputArea.deleteBtn);
+            //
+            //         // parentNode.appendChild(inputArea.releaseYear)
+            //         // divId.appendChild(inputArea.plotSummary)
+            //
+            //     }
+            //
+            // })
 
 
 
 
 
-            // Klickar på addMovie.addButton och alla värden läggs in i ett objekt.
-            addMovie.addButton.addEventListener("click", function() {
-
-                let addMovieValues = {
-                    title: addMovie.title.value,
-                    director: addMovie.director.value,
-                    releaseYear: addMovie.releaseYear.value,
-                    plotSummary: addMovie.plotSummary.value
-                }
-
-                // Skickar upp den skapade filmen till firebase
-                db.ref("movies/").push(addMovieValues);
-                childadded()
-
-            })
 
 
-  // true
 
 
-  // alternative to DOMContentLoaded
+            // true
 
-  ////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////
 
-  db.ref('movies/').on('child_changed', function(snapshot) {
-      // Inträffar när ett objekt ändras.
-      let data = snapshot.val();
-      let key = snapshot.key;
-      let container = document.getElementsByClassName("movieContainer");
-      let containerKey = document.getElementById(key);
+            // alternative to DOMContentLoaded
 
-      containerKey.childNodes[0].innerText = data.title;
-      containerKey.childNodes[1].innerText = data.director;
-      containerKey.childNodes[2].innerText = data.releaseYear;
-      containerKey.childNodes[3].innerText = data.plotSummary;
-  });
+            ////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////
 
-  ////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////
+            db.ref('movies/').on('child_changed', function(snapshot) {
+                // Inträffar när ett objekt ändras.
+                let data = snapshot.val();
+                let key = snapshot.key;
+                let container = document.getElementsByClassName("movieContainer");
+                let containerKey = document.getElementById(key);
 
-  // db.ref('movies/').orderByChild('title').on('value', function(snapshot) {
-  //     let data = snapshot.val(); // VARNING! Behåller inte sorteringen
-  //
-  //
-  //     snapshot.forEach(child => {
-  //         let objekt = child.val(); // objekten kommer i ordning
-  //         console.log(objekt.title);
-  //     })
-  // })
+                containerKey.childNodes[0].innerText = data.title;
+                containerKey.childNodes[1].innerText = data.director;
+                containerKey.childNodes[2].innerText = data.releaseYear;
+                containerKey.childNodes[3].innerText = data.plotSummary;
+            });
 
-  ////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////
+
+            //////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////
+
+             db.ref('movies/').orderByChild('title').on('value', function(snapshot) {
+                 let data = snapshot.val(); // VARNING! Behåller inte sorteringen
+
+                 snapshot.forEach(child => {
+                     let objekt = child.val(); // objekten kommer i ordning
+                 })
+             })
+
+            //////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////
+
+
+            ////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////
 
         })
-
 
     </script>
     <style media="screen">
@@ -605,8 +1077,15 @@
         .movieContainer input {
             margin: 10px;
         }
+        .pageNumbersDiv{
 
+          text-align: center;
 
+        }
+        .pageNumbersDiv span{
+          margin:10px;
+          cursor: pointer;
+        }
 
     </style>
 </head>
@@ -635,7 +1114,7 @@
         </div>
 
         <div id="movieList">
-          <!-- <div contenteditable="true">
+            <!-- <div contenteditable="true">
            This text can be edited by the user.
           </div> -->
 
