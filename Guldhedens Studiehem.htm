@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)http://www.guldheden.com/applicants/edit/8306 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Guldhedens Studiehem</title>
+
+    
+    
+
+    
+    <link type="text/css" href="./Guldhedens Studiehem_files/jquery-ui-1.9.1.custom.css" rel="Stylesheet">
+    
+    <link type="text/css" href="./Guldhedens Studiehem_files/bootstrap.css" rel="Stylesheet">
+    <link type="text/css" href="./Guldhedens Studiehem_files/guldheden.css" rel="Stylesheet">
+    <style type="text/css">
+      #moving_in_date_div .ui-datepicker-calendar {
+        display: none;
+      }
+      .dataTables_filter {
+/*         float: right; */
+      }
+    </style>
+
+    <link href="./Guldhedens Studiehem_files/css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript" async="" src="./Guldhedens Studiehem_files/ga.js"></script><script type="text/javascript" src="./Guldhedens Studiehem_files/jquery-1.8.2.min.js"></script>
+
+    <script type="text/javascript" src="./Guldhedens Studiehem_files/jquery-ui-1.9.1.custom.min.js"></script>
+
+
+    
+      <script type="text/javascript" src="./Guldhedens Studiehem_files/jquery.validate.min.js"></script>
+              <script type="text/javascript" src="./Guldhedens Studiehem_files/jquery.validate.messages_sv.js"></script>
+          
+        <script src="./Guldhedens Studiehem_files/jquery.ui.datepicker-sv.js"></script>
+    <script src="./Guldhedens Studiehem_files/jquery.ui.datepicker-en.js"></script>
+
+    <script type="text/javascript" src="./Guldhedens Studiehem_files/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="./Guldhedens Studiehem_files/jquery.cycle.all.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $("a.destroy").click(function(e) {
+          e.preventDefault();
+          if (confirm("Är du säker?")) {
+              window.location = this.href;
+          }
+        });
+
+        $("#dialog").dialog({
+          width: 600,
+          modal: true,
+          autoOpen: false
+        });
+
+        $("#dialog-open").click(function() {
+          $("#dialog").dialog("open");
+          return false;
+        });
+
+        $('.slideshow').cycle({
+          fx: 'fade' // choose your transition type, ex: fade, scrollUp, shuffle, etc...
+        });
+
+        // If a meal is changed but not saved, prompt user to save
+        $("#meals-form :input")
+          .one("change", function() {
+            // Add a confirm dialog to the menu navigation
+            $("a.meals-nav").click(function(e) {
+              e.preventDefault();
+              if (confirm("Det finns ändringar som inte är sparade, fortsätt ändå?")) {
+                window.location = this.href;
+              }
+            });
+            // now remove the event handler from all the elements
+            // since you don't need it any more.
+            $("#meals-form :input").unbind("change");
+          })
+        ;
+
+        $( ".datepicker" ).datepicker({
+          dateFormat: "yy-mm-dd"
+        });
+
+        $.datepicker.setDefaults( $.datepicker.regional[ "sv" ] );
+
+                                  $("form").validate({
+            rules: {
+              moving_in_date: {
+                required: true,
+                dateISO: true
+              },
+              first_name: 'required',
+              last_name: 'required',
+//               date_of_birth: {
+//                 required: true,
+//                 dateISO: true
+//               },
+              person_number: {
+                required: true,
+                remote: {
+                  url: "/applicants/check-person-number",
+                  data: {
+                    swedish: function() {
+                      return $("#swedish:checked").val();
+                    },
+                    id: function() {
+                      return $("input#id").val();
+                    }
+                  },
+                  dataFilter: function(data) {
+                      var json = jQuery.parseJSON(data);
+                      if(json.error == "true") {
+                          return "\"" + json.errorMessage + "\"";
+                      } else {
+                          return "true";
+                      }
+                  }
+                }
+              },
+              email: {
+                required: true,
+                email: true
+              },
+              phone: {
+                required: true,
+                minlength: 7
+              },
+              education: 'required',
+              address: 'required',
+              next_of_kin: 'required',
+              next_of_kin_phone: {
+                required: true,
+                minlength: 7
+              }
+            },
+            messages: {
+//               person_number: {
+//                 remote: jQuery.validator.format("{0} är inte ett giltigt personnummer")
+//               }
+            },
+            errorElement: "span",
+            errorClass: "error",
+            errorPlacement: function(error, el) {
+              el.parent().find('span.help-inline').text(error.text());
+              el.closest("div.control-group").addClass("error");
+            },
+            success: function(error, el) {
+              $(el).closest("div.control-group").removeClass("error");
+//               $(el).closest("div.control-group").removeClass("warning");
+            },
+//             debug: true
+          });
+
+          $("input#swedish").change(function() {
+            $("input#person_number").valid();
+          });
+
+          $('#moving_in_date_div').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showMonthAfterYear: true,
+            showButtonPanel: false,
+            minDate: '+1m',
+            dateFormat: "yy-mm-dd",
+            defaultDate: '2017-10-01',            yearRange:"c-:c+5",
+            onChangeMonthYear: function(year, month, inst) {
+              $("input#moving_in_date").val(new Date(year, month-1, 2).toISOString().substr(0, 10));
+            }
+          });
+//           $('#moving_in_date_div > div').css('border-width', '0px');
+//           $('#moving_in_date_div > div').css('padding', '0 0 10px');
+          $('#moving_in_date_div > div').css('padding-bottom', '3px');
+          $("input#moving_in_date").css("display", "none");
+          $("input#moving_in_date").val(new Date(new Date().getFullYear(), new Date().getMonth()+1, 2).toISOString().substr(0, 10));
+
+
+          $("label[for='person_number']").text("Personnummer");
+
+          function toggle_pnum_bdate() {
+            if ($("#swedish:checkbox:checked").val() === undefined) {
+//               $("input#person_number").rules("remove");
+//               $("input#person_number").closest("div.control-group").find("span.help-inline").text("");
+//               $("input#person_number").closest("div.control-group").removeClass("warning");
+//               $("input#person_number").rules("add", {
+//                 required: false,
+// //                 dateISO: true,
+// //                 messages: {
+// //                   required: "OAH!!!",
+// //                   dateISO: "OHOHOH"
+// //                 }
+//               });
+
+              $("#person_number_div").datepicker({
+                firstDay: 1,
+                maxDate: '0d',
+                altField: "#person_number",
+                altFormat: "ymmdd",
+                changeMonth: true,
+                changeYear: true,
+                showMonthAfterYear: true,
+                yearRange:"c-100:+0"
+              });
+
+              $("input#person_number").css("display", "none");
+              $("label[for=person_number]").text("Födelsedatum");
+            }
+            else {
+              $("#person_number_div").datepicker("destroy");
+              $("#person_number").css("display", "inline");
+              $("label[for='person_number']").text("Personnummer");
+//               $("form #person_number").rules("remove");
+//               $("form #person_number").rules("add", {
+//                 required: true,
+//                 remote: {
+//                   url: "/applicants/check_person_number",
+//                   data: {
+//                     swedish: function() {
+//                       return $("#swedish:checked");
+//                     },
+//                     id: function() {
+//                       return $("#id");
+//                     }
+//                   }
+//                 }
+//               });
+            }
+
+//             $("input#person_number").valid();
+          }
+          toggle_pnum_bdate(); // Must run if swedish == false, and change must be done without click
+
+          $("input#swedish").click(function(e) {toggle_pnum_bdate()});
+
+              });
+    </script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-39872221-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    <style>
+      .tooltip-inner {
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body style="">
+    <div id="wrap">
+      <div class="container-narrow">
+
+        
+        <div id="lang">
+          <p>
+            <a href="http://www.guldheden.com/lang/en">English</a> |
+            <a class="active" href="http://www.guldheden.com/lang/sv">Svenska</a>
+          </p>
+        </div>
+
+        <div id="menu" class="navbar">
+          <ul>
+            <li><a href="http://www.guldheden.com/">Hem</a></li>
+            <li class="active"><a href="http://www.guldheden.com/applicants">Ansökan</a></li>
+            <li><a href="http://www.guldheden.com/meals">Servering</a></li>
+
+                          <li><a href="http://www.guldheden.com/information">Information</a></li>
+                      </ul>
+        </div>
+
+        <div id="notifications">
+          
+                  </div>
+
+<h2>Ansökan <small>Jonathan Johansson</small></h2>
+
+<form action="http://www.guldheden.com/applicants/update/8306" method="post" accept-charset="utf-8" class="form-horizontal" novalidate="novalidate">
+    
+    
+  <input type="hidden" name="id" id="id" value="8306">
+
+<div class="control-group">
+  <label class="control-label" for="moving_in_date">
+          Nytt inflyttningsdatum      </label>
+  <div class="controls">
+    <div id="moving_in_date_div" class="hasDatepicker"><div class="ui-datepicker-inline ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" style="display: block; padding-bottom: 3px;"><div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all"><a class="ui-datepicker-prev ui-corner-all ui-state-disabled" title="«Förra"><span class="ui-icon ui-icon-circle-triangle-w">«Förra</span></a><a class="ui-datepicker-next ui-corner-all" data-handler="next" data-event="click" title="Nästa»"><span class="ui-icon ui-icon-circle-triangle-e">Nästa»</span></a><div class="ui-datepicker-title"><select class="ui-datepicker-year" data-handler="selectYear" data-event="change"><option value="2018" selected="selected">2018</option><option value="2019">2019</option><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option></select><select class="ui-datepicker-month" data-handler="selectMonth" data-event="change"><option value="2" selected="selected">Mar</option><option value="3">Apr</option><option value="4">Maj</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option><option value="9">Okt</option><option value="10">Nov</option><option value="11">Dec</option></select></div></div><table class="ui-datepicker-calendar"><thead><tr><th><span title="Måndag">Må</span></th><th><span title="Tisdag">Ti</span></th><th><span title="Onsdag">On</span></th><th><span title="Torsdag">To</span></th><th><span title="Fredag">Fr</span></th><th class="ui-datepicker-week-end"><span title="Lördag">Lö</span></th><th class="ui-datepicker-week-end"><span title="Söndag">Sö</span></th></tr></thead><tbody><tr><td class=" ui-datepicker-other-month ui-datepicker-unselectable ui-state-disabled">&nbsp;</td><td class=" ui-datepicker-other-month ui-datepicker-unselectable ui-state-disabled">&nbsp;</td><td class=" ui-datepicker-other-month ui-datepicker-unselectable ui-state-disabled">&nbsp;</td><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">1</span></td><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">2</span></td><td class=" ui-datepicker-week-end ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">3</span></td><td class=" ui-datepicker-week-end ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">4</span></td></tr><tr><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">5</span></td><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">6</span></td><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">7</span></td><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">8</span></td><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">9</span></td><td class=" ui-datepicker-week-end ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">10</span></td><td class=" ui-datepicker-week-end ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">11</span></td></tr><tr><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">12</span></td><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">13</span></td><td class=" ui-datepicker-unselectable ui-state-disabled "><span class="ui-state-default">14</span></td><td class=" ui-datepicker-days-cell-over  ui-datepicker-current-day" data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default ui-state-active ui-state-hover" href="http://www.guldheden.com/applicants/edit/8306#">15</a></td><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">16</a></td><td class=" ui-datepicker-week-end " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">17</a></td><td class=" ui-datepicker-week-end " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">18</a></td></tr><tr><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">19</a></td><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">20</a></td><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">21</a></td><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">22</a></td><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">23</a></td><td class=" ui-datepicker-week-end " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">24</a></td><td class=" ui-datepicker-week-end " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">25</a></td></tr><tr><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">26</a></td><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">27</a></td><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">28</a></td><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">29</a></td><td class=" " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">30</a></td><td class=" ui-datepicker-week-end " data-handler="selectDay" data-event="click" data-month="2" data-year="2018"><a class="ui-state-default" href="http://www.guldheden.com/applicants/edit/8306#">31</a></td><td class=" ui-datepicker-week-end ui-datepicker-other-month ui-datepicker-unselectable ui-state-disabled">&nbsp;</td></tr></tbody></table></div></div>
+    <input type="text" name="moving_in_date" value="2017-10-01" id="moving_in_date" style="display: none;">    <span class="help-inline">
+          </span>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="education">
+    Sökt utbildning  </label>
+  <div class="controls">
+    <input type="text" name="education" value="Frontend utvecklare ECutbildning" id="education" class="input-xlarge">    <span class="help-inline">
+          </span>
+    <br>
+<!--  </div>
+
+  <div class="controls">-->
+    <input type="checkbox" name="teacher" value="1" id="teacher"> Lärarstuderande  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="email">
+    E-post  </label>
+  <div class="controls">
+    <input type="text" name="email" value="jjohanssonjonathan@gmail.com" id="email" class="input-xlarge">    <span class="help-inline">
+          </span>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="phone">
+    Telefon  </label>
+  <div class="controls">
+    <input type="text" name="phone" value="0701433070" id="phone" class="input-large">    <span class="help-inline">
+          </span>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="information">
+    Skriv lite om dig själv  </label>
+  <div class="controls">
+    <textarea name="information" cols="40" rows="4" class="input-block-level">Är en glad, trevlig och social person. Älskar att resa och uppleva nya kulturer.  
+De senaste åren har jag jobbat och rest. 
+För några år sedan reste jag runt med en volontärorganisation och hjälpte till i 3 månader efter det så reste jag själv i Indien och Nepal i 2 månader. Innan de har jag varit mycket hos min morfar som bor och jobbar i Tanzania som missionär. 
+Kom nyligen hem i slutet av april från min 8 månaders resa genom Sydamerika. Reste runt i 8 länder själv för att se, lära mig spanska och uppleva kulturen. 
+
+Kommer från Småland och är med i en kristen församling i korsberga. 
+
+I somras har jag jobbat på Willys och nu denna hösten så kom jag in på en utbildning som heter frontend utvecklare. Det är en yrkeshögskola av ECutbildning som befinner sig i Göteborg. Har bara boende till 23 oktober men är tvungen att hitta något nytt om jag ska kunna fortsätta min utbildning.
+
+Referens: Robert samefors. vän som tidigare bott på Guldheden.
+0730870283
+Sofie Josefsson. Vän som nuvarande bor på Guldheden. 
+0738435404
+
+
+Mvh Jonathan </textarea>
+    <span class="help-inline">
+          </span>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="address">
+    Nuvarande adress  </label>
+  <div class="controls">
+    <textarea name="address" cols="40" rows="4" class="input-block-level valid">Herkulesgatan 7a
+41701 Göteborg</textarea>
+    <span class="help-inline"></span>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="next_of_kin">
+    Närmast anhörig  </label>
+  <div class="controls">
+    <input type="text" name="next_of_kin" value="Kenneth Johansson " id="next_of_kin" class="input-xlarge">    <span class="help-inline">
+          </span>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="next_of_kin_phone">
+    Telefonnummer till närmast anhörig  </label>
+  <div class="controls">
+    <input type="text" name="next_of_kin_phone" value="0732641963" id="next_of_kin_phone" class="input-large">    <span class="help-inline">
+          </span>
+  </div>
+</div>
+
+  <div class="control-group">
+    <div class="controls">
+      <input type="submit" name="submit" value="Uppdatera" class="btn btn-large btn-success">    </div>
+  </div>
+
+</form>
+        <div id="push"></div>
+      </div>
+      
+    </div> <!-- #wrap -->
+    
+        
+    <div id="footer">
+      <div class="container-narrow">
+         Guldhedens Studiehem // Dr. Bex Gata 2 // 413 24 Göteborg // Tel: 031-82 14 16      </div>
+    </div>
+  
+
+<div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div></body></html>

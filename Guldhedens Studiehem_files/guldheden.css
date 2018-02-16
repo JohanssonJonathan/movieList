@@ -1,0 +1,110 @@
+/*
+ *
+ * Layout stuff:
+ *
+ */
+
+html,body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+body {
+  background-image: url('/images/background.jpg');
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -60px;
+  background-color: white;
+  width: 780px;
+}
+
+/* Set the fixed height of the footer here */
+#push,#footer {
+  height: 60px;
+}
+#footer {
+/*   background-color: #f5f5f5; */
+  font-style: italic;
+  text-align: center;
+  font-size: 11px;
+  line-height: 46px;
+}
+#footer .container-narrow {
+  height: 60px;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 700px) {
+  #footer {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* Big layout */
+.container-narrow {
+  background-color: white;
+  margin: 0 auto;
+  padding: 0 40px;
+  width: 700px;
+}
+
+#lang {
+  text-align: right;
+  height: 30px;
+}
+#lang a.active {
+  font-weight: bold;
+}
+
+/* Menu */
+#menu {
+  background-image: url('/images/meny_logga_low.jpg');
+  height: 120px;
+  font-family: 'Economica', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+}
+#menu a {
+  color: black;
+}
+#menu ul {
+  padding: 90px 0px 0px 40px;
+  list-style-type: none;
+  position: relative; /* This should be on div.menu li instead, but this will break FF */
+}
+#menu li {
+  float: left;
+}
+#menu li:after {
+  margin: 0 4px;
+  content: "//";
+}
+#menu li:last-child:after {
+  content: "";
+}
+#menu li.active {
+
+}
+
+/*
+ *
+ * Page specific styles
+ *
+ */
+
+.information-page textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+}
