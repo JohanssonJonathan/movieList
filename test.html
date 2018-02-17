@@ -21,22 +21,7 @@
 
     </script>
 
-    <!-- <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script>
-        // Initialize Firebase
-        var config = {
-            apiKey: "AIzaSyDdogpeQIjZoHp_AISjIzg8mNakBrEiumc",
-            authDomain: "firstprojectjs2.firebaseapp.com",
-            databaseURL: "https://firstprojectjs2.firebaseio.com",
-            projectId: "firstprojectjs2",
-            storageBucket: "firstprojectjs2.appspot.com",
-            messagingSenderId: "159932688881"
-        };
-        firebase.initializeApp(config);
-
-    </script> -->
-    <script>
-
         window.addEventListener("load", function() {
 
             let db = firebase.database();
@@ -65,128 +50,110 @@
 
             let body = document.getElementsByTagName("body")[0]
 
-            let sortMovies = document.getElementById("searchMovie");
+            let sortMovieTitle = document.getElementById("sortMovieTitle");
+            let sortMovieDirector = document.getElementById("sortMovieDirector");
+            let sortMovieYear = document.getElementById("sortMovieYear");
 
             let nummerPage = document.getElementById("numbersDiv")
-
-            let searchInput = document.getElementById("searchInput");
-
-            let filter = document.getElementById("filter")
-
-            let ord = ""
-
-            let y=0;
-
-            let limitSearch =0;
-
-            searchInput.addEventListener("change",function(){
-
-              ord=""
-              y=0;
-
-              searchInput.value =""
-              limitSearch=0;
-            })
-
-            searchInput.addEventListener("keydown", function(e){
-
-
-
-
-                  if(e.key === "Backspace"){
-
-                    ord = ord.slice(0,-1)
-
-                    filter.innerHTML = ""
-
-                    if(ord.length >0){
-
-                      limitSearch = 0;
-
-                      for(let x in helaDatabasen){
-
-                        // console.log(ord)
-                        // // console.log(ord.length)
-                        // console.log("helaDatabasen.title: ", helaDatabasen[x].title.substring(0,ord.length))
-
-                        if(ord.toLowerCase() === helaDatabasen[x].title.substring(0,ord.length).toLowerCase()){
-
-                          if(limitSearch<6){
-
-                            filter.innerHTML += "</br>"+helaDatabasen[x].title
-
-                          }
-                          limitSearch++
-
-                        }
-
-                      }
-                    }
-
-
-                      y--
-
-                  }else{
-
-                    ord += e.key
-
-
-
-
-                  if(ord.length > 0){
-                    filter.innerHTML = ""
-                    limitSearch = 0;
-                      for(let x in helaDatabasen){
-
-
-                        if(ord.toLowerCase() === helaDatabasen[x].title.substring(0,ord.length).toLowerCase()){
-
-                          console.log(limitSearch)
-                          if(limitSearch<6){
-                          filter.innerHTML += "</br>"+helaDatabasen[x].title
-
-                          }
-
-                          limitSearch++
-
-
-
-                        }
-
-                      }
-
-                    }
-
-
-                    y++
-
-
-                  }
-
-            })
-
 
             //////////////////////////////////////////
             /// Tar alla element som ligger i varje film container
             ////////////////////////////////////////////
+            let searchInput = document.getElementById("searchInput");
+            let filter = document.getElementById("filter")
+            let ord = "";
+            let y = 0;
+            let limitSearch = 0;
+
+            searchInput.addEventListener("change", function() {
+                ord = ""
+                y = 0;
+                searchInput.value = ""
+                limitSearch = 0;
+            })
+
+            let helaDatabasenTitleArray = []
+
+
+            searchInput.addEventListener("keydown", function(e) {
+
+
+                  for(let object in helaDatabasen){
+
+                    helaDatabasenTitleArray.push(helaDatabasen[object].title)
+                    for(let i=0; i< helaDatabasen[object].title.length; i++){
+
+                    }
+                  }
+
+
+                if (e.key === "Backspace") {
+                    ord = ord.slice(0, -1)
+                    filter.innerHTML = "";
+                    if (ord.length > 0) {
+                        limitSearch = 0;
+                        for(let obj in helaDatabasen){
+
+
+                            let inc = helaDatabasen[obj].title.includes(ord)
+
+                            if(inc){
+
+                              console.log(helaDatabasen[obj].title)
+                              if (limitSearch < 6) {
+
+                                                      filter.innerHTML += "</br>" + helaDatabasen[obj].title
+                                                      limitSearch++;
+
+
+                                           }
+
+
+                            }
+
+                        }
+                    }
+                    y--
+                } else {
+                    ord += e.key
+                    limitSearch = 0;
+                    filter.innerHTML =""
+
+                      for(let obj in helaDatabasen){
+
+
+                          let inc = helaDatabasen[obj].title.includes(ord)
+
+                          if(inc){
+
+                            console.log(helaDatabasen[obj].title)
+                            if (limitSearch < 6) {
+
+                                                    filter.innerHTML += "</br>" + helaDatabasen[obj].title
+                                                    limitSearch++;
+
+
+                                         }
+
+
+                          }
+
+                      }
+
+                    y++
+                }
+            })
+
+
+
+
 
             let movie = {
-
                 title: "",
                 director: "",
                 releaseYear: "",
                 plotSummary: ""
-
             }
-
-
-
-
-            /////////////////////////////////////
-            ///          FIREBASE             ///
-            ////////////////////////////////////
-
-
 
             // Tar hem alla objekt första gången när man kommit in på hemsidan.
 
@@ -203,127 +170,90 @@
             showMore.setAttribute("id", "showMore")
             showMore.style.display = "none"
 
-            body.appendChild(showMore)
+            body.appendChild(showMore);
 
             let movieListLength = 0;
-
             let howManyInDatabase = 0;
-
-
-
             let showMoore = document.getElementById("showMore")
 
-
             showMoore.addEventListener("click", function() {
-                limitMultiply++
-                test()
-
-
-
+                limitMultiply++;
+                test();
             })
 
+            let helaDatabasen = [];
 
+            let changedMovie = {
+                title: addMovie.title.value,
+                director: addMovie.director.value,
+                releaseYear: addMovie.releaseYear.value,
+                plotSummary: addMovie.plotSummary.value
+            }
 
-            let helaDatabasen = []
-
-
-
-            let title = []
+            let object = "";
+            let title = [];
             let releaseYear = [];
-            let director = []
+            let director = [];
 
-            test()
+            test();
 
             let currentPage = 1;
             let howManyPages = 0;
             let theCode = ""
 
             function test() {
-
                 db.ref("movies/").on("child_added", function(snapshot) {
 
 
                     let database = snapshot.val();
-
-
                     let obj = {
-                      title: database.title,
-                      director: database.director,
-                      releaseYear: database.releaseYear,
-                      plotSummary : database.plotSummary,
-                      id:snapshot.key
+                        title: database.title,
+                        director: database.director,
+                        releaseYear: database.releaseYear,
+                        plotSummary: database.plotSummary,
+                        id: snapshot.key,
                     }
                     for (let movies in database) {
-
                         database[movies].id = movies;
-
-
-
                     };
-                    helaDatabasen.push(obj)
+                    helaDatabasen.push(obj);
+                    let div = "";
 
-
-                    let div = ""
                     theCode = function() {
-
-                      nummerPage.innerHTML =""
-
-                      div.innerHTML = ""
-
+                        nummerPage.innerHTML = "";
+                        div.innerHTML = "";
                         howManyPages = Math.ceil(helaDatabasen.length / 6);
-
-                        movieList.movieList.innerHTML = ""
+                        movieList.movieList.innerHTML = "";
                         div = document.createElement("div");
-
                         div.className = "pageNumbersDiv";
 
-
                         for (let i = 0; i < howManyPages; i++) {
-
-
                             let newPageNumber = document.createElement("span");
-
                             if (i + 1 === currentPage) {
-                                newPageNumber.style.color = "black"
+                                newPageNumber.style.color = "black";
                             }
                             newPageNumber.innerText = i + 1;
                             newPageNumber.className = "pageNumbers"
                             newPageNumber.setAttribute("id", i + 1)
                             div.appendChild(newPageNumber)
-
-
                         }
-                        nummerPage.appendChild(div)
-
+                        nummerPage.appendChild(div);
 
                         let startValue = 0;
 
                         function putOnScreen(currentPage) {
-
                             if (currentPage === 1) {
                                 currentPage = 0;
                             }
-
                             if (currentPage > 0) {
-                                startValue = (currentPage * 6) - 6
+                                startValue = (currentPage * 6) - 6;
                             }
-
-
-
                         }
 
-
-                        putOnScreen(currentPage)
-
+                        putOnScreen(currentPage);
                         let currentPageTotal = currentPage * 6
-
-
-
                         for (let i = startValue; i < currentPageTotal; i++) {
-
-
                             if (helaDatabasen[i] !== undefined) {
-
                                 let createOneMovie = {
                                     div: document.createElement("div"),
                                     title: document.createElement("h2"),
@@ -357,148 +287,115 @@
 
                                 //lägger till diven i movieList Containern
                                 movieList.movieList.appendChild(createOneMovie.div)
-
                             }
                         }
 
-
-
                         if (howManyPages > 0) {
-
                             for (let i = 1; i < howManyPages + 1; i++) {
-
                                 let pageNr = "pageNr" + i;
-
-                                pageNr = document.getElementById(i)
-
+                                pageNr = document.getElementById(i);
                                 if (pageNr !== null) {
                                     pageNr.addEventListener("click", function(e) {
-
-
-                                        let nummer = Number(pageNr.id)
-
-
-                                        currentPage = nummer
-
-                                        theCode()
-
-
-
+                                        let nummer = Number(pageNr.id);
+                                        currentPage = nummer;
+                                        theCode();
                                     })
                                 }
                             }
-
                         }
-
                     }
-
-                    theCode()
-
-
-
+                    theCode();
                 });
-
-
             };
 
+            function showOnScreen() {
+                for (let i = 0; i < helaDatabasen.length; i++) {
+
+                    if (i < 6) {
+                        let createOneMovie = {
+                            div: document.createElement("div"),
+                            title: document.createElement("h2"),
+                            director: document.createElement("h2"),
+                            releaseYear: document.createElement("h2"),
+                            plotSummary: document.createElement("p"),
+                            changeBtn: document.createElement("button"),
+                            deleteBtn: document.createElement("button"),
+                        }
+
+                        createOneMovie.changeBtn.innerText = "Change";
+                        createOneMovie.deleteBtn.innerText = "Delete";
+
+                        createOneMovie.title.innerText = helaDatabasen[i].title;
+                        createOneMovie.director.innerText = helaDatabasen[i].director;
+                        createOneMovie.releaseYear.innerText = helaDatabasen[i].releaseYear;
+                        createOneMovie.plotSummary.innerText = helaDatabasen[i].plotSummary;
+
+                        //Sätter diven till classnamnet som finns i vår css
+                        createOneMovie.div.className = "movieContainer";
+
+                        //Lägger till allt i diven
+                        createOneMovie.div.appendChild(createOneMovie.title);
+                        createOneMovie.div.appendChild(createOneMovie.director);
+                        createOneMovie.div.appendChild(createOneMovie.releaseYear);
+                        createOneMovie.div.appendChild(createOneMovie.plotSummary);
+                        createOneMovie.div.appendChild(createOneMovie.changeBtn);
+                        createOneMovie.div.appendChild(createOneMovie.deleteBtn);
+                        createOneMovie.div.setAttribute("id", helaDatabasen[i].id)
+
+                        //lägger till diven i movieList Containern
+                        movieList.movieList.appendChild(createOneMovie.div)
+                    }
+                }
+            }
 
             // Detta händer om något tagits bort i databasen
             db.ref("movies/").on('child_removed', function(snapshot) {
                 // Inträffar när ett objekt tas bort.
-
                 let data = snapshot.val(); // det borttagna objektet
                 let key = snapshot.key;
                 let container = document.getElementsByClassName("movieContainer");
 
-
                 for (let i = 0; i < helaDatabasen.length; i++) {
-
                     if (helaDatabasen[i].id === key) {
-
-                        helaDatabasen.splice(i, 1)
-
+                        helaDatabasen.splice(i, 1);
                     }
                 }
-
-                theCode()
-
+                theCode();
             });
 
             // Klickar på addMovie.addButton och alla värden läggs in i ett objekt.
             addMovie.addButton.addEventListener("click", function() {
-
-
                 let addMovieValues = {
                     title: addMovie.title.value,
                     director: addMovie.director.value,
                     releaseYear: addMovie.releaseYear.value,
-                    plotSummary: addMovie.plotSummary.value
+                    plotSummary: addMovie.plotSummary.value,
                 }
-
-
-
-                // Skickar upp den skapade filmen till firebase
                 db.ref("movies/").push(addMovieValues);
-
-
-
             })
 
 
-            ////////////////////////////////////////////////////////
-            //////// EVENTLISTENERS ///////////////////////////////
-            //////////////////////////////////////////////////////
-
-
-
-            let changedMovie = {
-                title: addMovie.title.value,
-                director: addMovie.director.value,
-                releaseYear: addMovie.releaseYear.value,
-                plotSummary: addMovie.plotSummary.value
-            }
-            let object = ""
-
-
-
             movieList.movieList.addEventListener("click", function(e) {
-
-
-
                 let parentNode = e.target.parentNode;
-
-
                 object = {
                     title: parentNode.children[0].innerText,
                     director: parentNode.children[1].innerText,
                     releaseYear: parentNode.children[2].innerText,
-                    plotSummary: parentNode.children[3].innerText
-
+                    plotSummary: parentNode.children[3].innerText,
                 }
-
-
-
 
                 // Här kommer den bara gå in när diven innehåller INPUT element
                 if (parentNode.children[0].tagName === "INPUT") {
-
-
-                    // Går igenom alla INPUTelement för att ändra deras värden till det man skrivit in.
-                    //
-
+                    // Går igenom alla INPUTelement för att ändra deras värden till det man skrivit in
                     for (let x = 0; x < parentNode.children.length; x++) {
-
                         if (x === 0) {
-                            changedMovie.title = parentNode.children[x].value
+                            changedMovie.title = parentNode.children[x].value;
                         } else if (x === 1) {
-
-                            changedMovie.director = parentNode.children[x].value
+                            changedMovie.director = parentNode.children[x].value;
                         } else if (x === 2) {
-
-                            changedMovie.releaseYear = parentNode.children[x].value
+                            changedMovie.releaseYear = parentNode.children[x].value;
                         } else if (x === 3) {
-
-                            changedMovie.plotSummary = parentNode.children[x].value
+                            changedMovie.plotSummary = parentNode.children[x].value;
                         }
                     }
 
@@ -506,11 +403,8 @@
                     if (e.target.innerText === "Change") {
                         //Hämtar objektet från databasen från detta idet.
                         db.ref("movies/" + parentNode.id).set(changedMovie);
-
                         //rensar databasen för att kunna lägga in nytt.
-                        parentNode.innerHTML = ""
-
-
+                        parentNode.innerHTML = "";
                         // Skapar alla element igen
                         let createOneMovie = {
                             title: document.createElement("h2"),
@@ -529,36 +423,23 @@
                         createOneMovie.changeBtn.innerText = "Change";
                         createOneMovie.deleteBtn.innerText = "Delete";
 
-
-
                         // Lägger in alla element i domen
-                        parentNode.appendChild(createOneMovie.title)
-                        parentNode.appendChild(createOneMovie.director)
-
-                        parentNode.appendChild(createOneMovie.releaseYear)
-
-                        parentNode.appendChild(createOneMovie.plotSummary)
+                        parentNode.appendChild(createOneMovie.title);
+                        parentNode.appendChild(createOneMovie.director);
+                        parentNode.appendChild(createOneMovie.releaseYear);
+                        parentNode.appendChild(createOneMovie.plotSummary);
                         parentNode.appendChild(createOneMovie.changeBtn);
                         parentNode.appendChild(createOneMovie.deleteBtn);
 
                     }
-
-
                 } else if (e.target.innerText === "Delete") { // Tar bort Hela elementet
-
-
                     // remove tar bort ett objectekt. Man måste använda objectektets key
                     db.ref("movies/" + parentNode.id).remove();
                     // Tar bort objektet lokalt på hemsidan
                     e.target.parentNode.remove();
-
                 } else if (e.target.innerText === "Change") { //Om man klickar på change knappen
-
-
-
                     //Rensar hela innehållet i diven innan vi lägger in nya saker
-                    parentNode.innerHTML = ""
-
+                    parentNode.innerHTML = "";
 
                     // Skapar massa inputfält
                     let inputArea = {
@@ -568,46 +449,28 @@
                         plotSummary: document.createElement("INPUT"),
                         changeBtn: document.createElement("BUTTON"),
                         deleteBtn: document.createElement("BUTTON")
-
                     }
-
-                    // Hämtar ner databasen från detta meddelandet.
-
-
                     //Sätter attributer på TYPE och Value
                     inputArea.title.setAttribute("type", "text");
-                    inputArea.title.setAttribute("value", object.title)
+                    inputArea.title.setAttribute("value", object.title);
                     inputArea.director.setAttribute("type", "text");
-                    inputArea.director.setAttribute("value", object.director)
+                    inputArea.director.setAttribute("value", object.director);
                     inputArea.releaseYear.setAttribute("type", "text");
-                    inputArea.releaseYear.setAttribute("value", object.releaseYear)
+                    inputArea.releaseYear.setAttribute("value", object.releaseYear);
                     inputArea.plotSummary.setAttribute("type", "text");
-                    inputArea.plotSummary.setAttribute("value", object.plotSummary)
+                    inputArea.plotSummary.setAttribute("value", object.plotSummary);
                     inputArea.changeBtn.innerText = "Change";
                     inputArea.deleteBtn.innerText = "Delete";
 
-
-                    // LÄgger in alla input element i diven som man kan ändra på.
+                    // Lägger in alla input element i diven som man kan ändra på.
                     parentNode.appendChild(inputArea.title);
                     parentNode.appendChild(inputArea.director);
                     parentNode.appendChild(inputArea.releaseYear);
                     parentNode.appendChild(inputArea.plotSummary);
                     parentNode.appendChild(inputArea.changeBtn);
                     parentNode.appendChild(inputArea.deleteBtn);
-
-                    // parentNode.appendChild(inputArea.releaseYear)
-                    // divId.appendChild(inputArea.plotSummary)
-
                 }
-
-
-
             })
-
-            // alternative to DOMContentLoaded
-
-            ////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////
 
             db.ref('movies/').on('child_changed', function(snapshot) {
                 // Inträffar när ett objekt ändras.
@@ -616,93 +479,130 @@
                 let container = document.getElementsByClassName("movieContainer");
                 let containerKey = document.getElementById(key);
 
-
-                for(let i = 0; i < helaDatabasen.length; i++){
-                    if(helaDatabasen[i].id === key){
+                for (let i = 0; i < helaDatabasen.length; i++) {
+                    if (helaDatabasen[i].id === key) {
                         helaDatabasen[i].title = data.title;
                         helaDatabasen[i].director = data.director;
                         helaDatabasen[i].releaseYear = data.releaseYear;
                         helaDatabasen[i].plotSummary = data.plotSummary;
                     }
                 }
-
                 containerKey.childNodes[0].innerText = data.title;
                 containerKey.childNodes[1].innerText = data.director;
                 containerKey.childNodes[2].innerText = data.releaseYear;
                 containerKey.childNodes[3].innerText = data.plotSummary;
             });
 
-            ////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////
 
-            //////////////////////////////////////////////////////////////////
-            function sortByTitle() {
-              let toBeSortedTitle = [];
-              for (let i = 0; i < helaDatabasen.length; i++) {
-                // console.log(helaDatabasen[i].title.toLowerCase())
+            let sortTitleBool = false;
 
-                  helaDatabasen[i].title = helaDatabasen[i].title.toLowerCase();
+            function sortByTitleAscending() {
+                sortTitleBool = true;
+                //                let toBeSortedTitle = [];
+                for (let i = 0; i < helaDatabasen.length; i++) {
+                    helaDatabasen[i].title = helaDatabasen[i].title.toLowerCase();
+                }
+                let sorted = helaDatabasen.sort(function titleName(a, b) {
+                    return b.title < a.title ? 1 :
+                        title.name > title.name ? -1 :
+                        0;
+                });
+                showOnScreen();
+            }
+
+            function sortByTitleDescending() {
+                sortTitleBool = false;
+                //                let toBeSortedTitle = [];
+                for (let i = 0; i < helaDatabasen.length; i++) {
+                    helaDatabasen[i].title = helaDatabasen[i].title.toLowerCase();
+                }
+                let sorted = helaDatabasen.sort(function titleName(a, b) {
+                    return b.title > a.title ? 1 :
+                        title.name < title.name ? -1 :
+                        0;
+                });
+                showOnScreen();
+            }
+
+            let sortDirectorBool = false;
+
+            function sortByDirectorAscending() {
+                sortDirectorBool = true;
+                //                let toBeSortedDirector = [];
+                for (let i = 0; i < helaDatabasen.length; i++) {
+                    helaDatabasen[i].director = helaDatabasen[i].director.toLowerCase();
+                }
+                let sorted = helaDatabasen.sort(function directorName(a, b) {
+                    return b.director < a.director ? 1 :
+                        director.name > director.name ? -1 :
+                        0;
+                });
+                showOnScreen();
+            }
+
+            function sortByDirectorDescending() {
+                sortDirectorBool = false;
+                //                let toBeSortedDirector = [];
+                for (let i = 0; i < helaDatabasen.length; i++) {
+                    helaDatabasen[i].director = helaDatabasen[i].director.toLowerCase();
+                }
+                let sorted = helaDatabasen.sort(function directorName(a, b) {
+                    return b.director > a.director ? 1 :
+                        director.name < director.name ? -1 :
+                        0;
+                });
+                showOnScreen();
+            }
 
 
+            let sortYearBool = false;
 
-                  // helaDatabasen[i].title
+            function sortByYearAscending() {
+                sortYearBool = true;
+                let toBeSortedYear = [];
 
-              }
-              let sorted = helaDatabasen.sort(function titleName(a, b) {
-                  return b.title < a.title ? 1 :
-                      title.name > title.name ? -1 :
-                      0;
-              });
+                let sorted = helaDatabasen.sort(function yearOfRelease(a, b) {
+                    return b.releaseYear < a.releaseYear ? 1 :
+                        releaseYear.name > releaseYear.name ? -1 :
+                        0;
+                });
+                showOnScreen();
+            }
 
-              for (let i = 0; i < helaDatabasen.length; i++) {
-                  if (i < 6) {
-                      let createOneMovie = {
-                          div: document.createElement("div"),
-                          title: document.createElement("h2"),
-                          director: document.createElement("h2"),
-                          releaseYear: document.createElement("h2"),
-                          plotSummary: document.createElement("p"),
-                          changeBtn: document.createElement("button"),
-                          deleteBtn: document.createElement("button"),
-                      }
+            function sortByYearDescending() {
+                sortYearBool = false;
+                let toBeSortedYear = [];
+                let sorted = helaDatabasen.sort(function yearOfRelease(a, b) {
+                    return b.releaseYear > a.releaseYear ? 1 :
+                        releaseYear.name < releaseYear.name ? -1 :
+                        0;
+                });
+                showOnScreen();
+            }
 
-                      createOneMovie.changeBtn.innerText = "Change";
-                      createOneMovie.deleteBtn.innerText = "Delete";
-
-                      createOneMovie.title.innerText = helaDatabasen[i].title;
-                      createOneMovie.director.innerText = helaDatabasen[i].director;
-                      createOneMovie.releaseYear.innerText = helaDatabasen[i].releaseYear;
-                      createOneMovie.plotSummary.innerText = helaDatabasen[i].plotSummary;
-
-                      //Sätter diven till classnamnet som finns i vår css
-                      createOneMovie.div.className = "movieContainer";
-
-                      //Lägger till allt i diven
-                      createOneMovie.div.appendChild(createOneMovie.title);
-                      createOneMovie.div.appendChild(createOneMovie.director);
-                      createOneMovie.div.appendChild(createOneMovie.releaseYear);
-                      createOneMovie.div.appendChild(createOneMovie.plotSummary);
-                      createOneMovie.div.appendChild(createOneMovie.changeBtn);
-                      createOneMovie.div.appendChild(createOneMovie.deleteBtn);
-                      createOneMovie.div.setAttribute("id", helaDatabasen[i].id)
-
-                      //lägger till diven i movieList Containern
-                      movieList.movieList.appendChild(createOneMovie.div)
-
-                  }
-
-              }
-
-          }
-            //////////////////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////////////////
-            sortMovies.addEventListener("click", function(e) {
+            sortMovieTitle.addEventListener("click", function(e) {
                 movieList.movieList.innerHTML = "";
-                sortByTitle();
+                if (sortTitleBool === false)
+                    sortByTitleAscending();
+                else
+                    sortByTitleDescending();
             })
 
-            ////////////////////////////////////////////////////////////////////
-            ////////////////////////////////////////////////////////////////////
+            sortMovieDirector.addEventListener("click", function(e) {
+                movieList.movieList.innerHTML = "";
+                if (sortDirectorBool === false)
+                    sortByDirectorAscending();
+                else
+                    sortByDirectorDescending();
+            })
+
+            sortMovieYear.addEventListener("click", function(e) {
+                movieList.movieList.innerHTML = "";
+                if (sortYearBool === false)
+                    sortByYearAscending();
+                else
+                    sortByYearDescending();
+            })
 
         })
 
@@ -711,6 +611,7 @@
         body {
             background: url("blurred_lines.jpeg");
             background-size: cover;
+            height: 100%;
             color: rgba(255, 255, 255, 0.8);
             font-family: arial;
         }
@@ -724,7 +625,8 @@
         h1 {
             text-align: center;
             position: relative;
-            margin-top: 100px;
+            margin-top: 50px;
+            font-size: 50px;
         }
 
         .search {
@@ -733,10 +635,10 @@
             position: relative;
         }
 
-        .search input{
-          width:300px;
-          height: 30px;
-          font-size: 1.2em;
+        .search input {
+            width: 300px;
+            height: 30px;
+            font-size: 1.2em;
         }
 
         input#writeMovie {
@@ -749,8 +651,11 @@
         }
 
 
-        button#searchMovie {
-
+        button#sortMovieTitle,
+        button#sortMovieYear,
+        button#sortMovieDirector,
+        button#add,
+        button#searchMovie{
             padding: 10px 20px;
             border-radius: 30px 0;
             background: rgb(90, 163, 223);
@@ -825,29 +730,30 @@
         .pageNumbersDiv span {
             margin: 10px;
             cursor: pointer;
+            font-family: arial;
+            font-size: 1.5em;
         }
 
-        #numbersDiv{
-          position: absolute;
-          bottom:0;
-          display: block;
-          width: 100%;
-          margin:auto;
-          background: red;
-          height: 20px;
+        #numbersDiv {
+            position: absolute;
+            bottom: 5px;
+            display: block;
+            width: 99%;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.5);
+            height: 30px;
         }
 
-        #filter{
-          position: absolute;
-          width: 420px;
-          margin: auto;
-          background: red;
-          left:0;
-          top: 35px;
-          right: 0;
+        #filter {
+            position: absolute;
+            width: 420px;
+            margin: auto;
+            background: red;
+            left: 0;
+            top: 35px;
+            right: 0;
 
         }
-
 
     </style>
 </head>
@@ -862,9 +768,13 @@
         <input type="text" placeholder="Search movie" id="searchInput">
         <button id="searchMovie">Sort Movies</button>
         <div id="filter"></div>
+    </div>
+    <button id="sortMovieTitle">Sort by Title</button>
+    <button id="sortMovieDirector">Sort by Director</button>
+    <button id="sortMovieYear">Sort by Year</button>
+    <div>
 
     </div>
-
 
     <div class="container">
 
@@ -873,28 +783,16 @@
             <input type="text" name="" value="" placeholder="Title" id="title">
             <input type="text" name="" value="" placeholder="Director" id="director">
             <input type="text" name="" value="" placeholder="Release Year" id="releaseYear">
-            <textarea id="plotSummary" name="" rows="6" cols="40"></textarea>
-            <button id="add">Add</button>
+            <textarea id="plotSummary" name="" rows="6" cols="40" placeholder="Plot summary..."></textarea>
+            <button id="add">Add Movie</button>
 
         </div>
 
         <div id="movieList">
-            <!-- <div contenteditable="true">
-           This text can be edited by the user.
-          </div> -->
-
-            <!-- <div class="movieContainer">
-
-                <h2 contenteditable="true">Titanic</h2>
-                <h2 contenteditable="true">James cameron</h2>
-                <h2 contenteditable="true">1997</h2>
-                <p contenteditable="true">Sinking ship, people getting #rekt</p>
-
-            </div> -->
 
         </div>
-
         <div id="numbersDiv"></div>
+
 
     </div>
 

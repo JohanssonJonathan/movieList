@@ -72,39 +72,81 @@
                 limitSearch = 0;
             })
 
+            let helaDatabasenTitleArray = []
+
+
             searchInput.addEventListener("keydown", function(e) {
+
+
+                  for(let object in helaDatabasen){
+
+                    helaDatabasenTitleArray.push(helaDatabasen[object].title)
+                    for(let i=0; i< helaDatabasen[object].title.length; i++){
+
+                    }
+                  }
+
+
                 if (e.key === "Backspace") {
                     ord = ord.slice(0, -1)
                     filter.innerHTML = "";
                     if (ord.length > 0) {
                         limitSearch = 0;
-                        for (let x in helaDatabasen) {
-                            if (ord.toLowerCase() === helaDatabasen[x].title.substring(0, ord.length).toLowerCase()) {
-                                if (limitSearch < 6) {
-                                    filter.innerHTML += "</br>" + helaDatabasen[x].title
-                                }
-                                limitSearch++
+                        for(let obj in helaDatabasen){
+
+
+                            let inc = helaDatabasen[obj].title.includes(ord)
+
+                            if(inc){
+
+                              console.log(helaDatabasen[obj].title)
+                              if (limitSearch < 6) {
+
+                                                      filter.innerHTML += "</br>" + helaDatabasen[obj].title
+                                                      limitSearch++;
+
+
+                                           }
+
+
                             }
+
                         }
                     }
                     y--
                 } else {
                     ord += e.key
-                    if (ord.length > 0) {
-                        filter.innerHTML = ""
-                        limitSearch = 0;
-                        for (let x in helaDatabasen) {
-                            if (ord.toLowerCase() === helaDatabasen[x].title.substring(0, ord.length).toLowerCase()) {
-                                if (limitSearch < 6) {
-                                    filter.innerHTML += "</br>" + helaDatabasen[x].title
-                                }
-                                limitSearch++;
-                            }
-                        }
-                    }
+                    limitSearch = 0;
+                    filter.innerHTML =""
+
+                      for(let obj in helaDatabasen){
+
+
+                          let inc = helaDatabasen[obj].title.includes(ord)
+
+                          if(inc){
+
+                            console.log(helaDatabasen[obj].title)
+                            if (limitSearch < 6) {
+
+                                                    filter.innerHTML += "</br>" + helaDatabasen[obj].title
+                                                    limitSearch++;
+
+
+                                         }
+
+
+                          }
+
+                      }
+
                     y++
                 }
             })
+
+
+
+
 
             let movie = {
                 title: "",
@@ -161,6 +203,8 @@
 
             function test() {
                 db.ref("movies/").on("child_added", function(snapshot) {
+
+
                     let database = snapshot.val();
                     let obj = {
                         title: database.title,
@@ -266,6 +310,7 @@
 
             function showOnScreen() {
                 for (let i = 0; i < helaDatabasen.length; i++) {
+
                     if (i < 6) {
                         let createOneMovie = {
                             div: document.createElement("div"),
