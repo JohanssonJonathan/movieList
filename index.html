@@ -97,6 +97,7 @@
 
                             let inc = helaDatabasen[obj].title.includes(ord)
 
+                              console.log(inc)
                             if(inc){
 
                               console.log(helaDatabasen[obj].title)
@@ -625,7 +626,7 @@
         h1 {
             text-align: center;
             position: relative;
-            margin-top: 50px;
+            margin-top: 10px;
             font-size: 50px;
         }
 
@@ -655,13 +656,15 @@
         button#sortMovieYear,
         button#sortMovieDirector,
         button#add,
-        button#searchMovie{
+        button#searchMovie {
             padding: 10px 20px;
             border-radius: 30px 0;
             background: rgb(90, 163, 223);
             color: rgba(255, 255, 255, 0.8);
             border: 0;
-            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3)
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+            display: inline-block;
+            margin-top:10px;
         }
 
 
@@ -674,7 +677,7 @@
         .addMovie {
             border: solid 2px rgba(255, 255, 255, 0.6);
             width: 30%;
-            height: 400px;
+            height: 500px;
             margin: 5px;
             text-align: center;
             background: rgba(0, 0, 0, 0.3);
@@ -698,7 +701,7 @@
         #movieList {
             border: solid 2px rgba(255, 255, 255, 0.6);
             background: rgba(0, 0, 0, 0.3);
-            width: 70%;
+            width: 80%;
             margin: 5px;
             display: flex;
             flex-wrap: wrap;
@@ -707,12 +710,13 @@
         .movieContainer {
             border: 2px solid rgba(255, 255, 255, 0.7);
             display: inline-block;
-            padding: 10px;
+            padding: 5px;
             text-align: center;
             width: 25%;
             align-self: stretch;
-            margin: 25px;
-            margin-bottom: 40px;
+            margin: 15px;
+            margin-left: 50px;
+            margin-bottom: 15px;
             background: rgba(0, 0, 0, 0.5);
 
         }
@@ -722,7 +726,6 @@
         }
 
         .pageNumbersDiv {
-
             text-align: center;
 
         }
@@ -735,23 +738,23 @@
         }
 
         #numbersDiv {
-            position: absolute;
-            bottom: 5px;
+            position: fixed;
+            bottom: 0;
             display: block;
             width: 99%;
             margin: auto;
             background: rgba(0, 0, 0, 0.5);
-            height: 30px;
         }
 
         #filter {
             position: absolute;
             width: 420px;
             margin: auto;
-            background: red;
+            background: rgba(0, 0, 0, 0.5);
             left: 0;
             top: 35px;
             right: 0;
+            border-radius: 30px 0;
 
         }
 
@@ -769,12 +772,8 @@
         <button id="searchMovie">Sort Movies</button>
         <div id="filter"></div>
     </div>
-    <button id="sortMovieTitle">Sort by Title</button>
-    <button id="sortMovieDirector">Sort by Director</button>
-    <button id="sortMovieYear">Sort by Year</button>
-    <div>
 
-    </div>
+
 
     <div class="container">
 
@@ -784,8 +783,12 @@
             <input type="text" name="" value="" placeholder="Director" id="director">
             <input type="text" name="" value="" placeholder="Release Year" id="releaseYear">
             <textarea id="plotSummary" name="" rows="6" cols="40" placeholder="Plot summary..."></textarea>
+            <br>
             <button id="add">Add Movie</button>
-
+            <br>
+            <button id="sortMovieTitle">Sort by Title</button>
+            <button id="sortMovieDirector">Sort by Director</button>
+            <button id="sortMovieYear">Sort by Year</button>
         </div>
 
         <div id="movieList">
