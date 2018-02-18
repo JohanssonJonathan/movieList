@@ -98,6 +98,7 @@
                             let inc = helaDatabasen[obj].title.includes(ord)
 
                               console.log(inc)
+
                             if(inc){
 
                               console.log(helaDatabasen[obj].title)
@@ -123,7 +124,7 @@
                       for(let obj in helaDatabasen){
 
 
-                          let inc = helaDatabasen[obj].title.includes(ord)
+                          let inc = helaDatabasen[obj].title.toLowerCase().includes(ord)
 
                           if(inc){
 
